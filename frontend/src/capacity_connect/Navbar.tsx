@@ -54,27 +54,27 @@ export const Navbar: React.FC<{ onLogout?: () => void }> = ({ onLogout }) => {
               alt="CapacityConnect Logo"
               className="h-12 sm:h-14 w-auto object-contain max-w-[210px]"
             />
-            <span className="hidden sm:inline-block px-2.5 py-0.5 bg-blue-50 text-blue-700 text-xs font-mono font-bold rounded-md border border-blue-200/80 uppercase tracking-wider">
+            <span className="hidden sm:inline-block px-3 py-1 bg-amber-50 text-[#DF6951] text-xs font-semibold rounded-full border border-amber-200 uppercase tracking-wider">
               Enterprise
             </span>
           </div>
 
-          {/* Locked-In Current Role Badge (Role cannot be switched while logged in) */}
-          <div className="flex items-center gap-2 font-heading">
+          {/* Locked-In Current Role Badge */}
+          <div className="flex items-center gap-2 font-sans">
             {currentRole === 'TRAINEE' && (
-              <span className="flex items-center gap-1.5 px-3.5 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm font-bold border border-blue-200/80 shadow-2xs">
+              <span className="flex items-center gap-1.5 px-3.5 py-1.5 bg-amber-50 text-[#DF6951] rounded-full text-xs sm:text-sm font-semibold border border-amber-200 shadow-2xs">
                 <User size={15} />
                 <span>Student / Trainee</span>
               </span>
             )}
             {currentRole === 'TRAINER' && (
-              <span className="flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-sm font-bold border border-emerald-200/80 shadow-2xs">
+              <span className="flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-50 text-emerald-800 rounded-full text-xs sm:text-sm font-semibold border border-emerald-200 shadow-2xs">
                 <UserCheck size={15} />
                 <span>Staff / Trainer</span>
               </span>
             )}
             {currentRole === 'ADMIN' && (
-              <span className="flex items-center gap-1.5 px-3.5 py-1.5 bg-indigo-50 text-indigo-700 rounded-full text-sm font-bold border border-indigo-200/80 shadow-2xs">
+              <span className="flex items-center gap-1.5 px-3.5 py-1.5 bg-indigo-50 text-[#181E4B] rounded-full text-xs sm:text-sm font-semibold border border-indigo-200 shadow-2xs">
                 <Shield size={15} />
                 <span>Platform Admin</span>
               </span>
@@ -180,45 +180,45 @@ export const Navbar: React.FC<{ onLogout?: () => void }> = ({ onLogout }) => {
         </div>
 
         {/* Dynamic Sub-Navigation Tabs based on Logged-in Role */}
-        <div className="flex items-center space-x-1.5 sm:space-x-2 border-t border-slate-200/80 py-3 overflow-x-auto text-sm font-heading font-semibold custom-scrollbar">
+        <div className="flex items-center space-x-1.5 sm:space-x-2 border-t border-slate-100 py-3 overflow-x-auto text-sm font-sans custom-scrollbar">
           {currentRole === 'TRAINEE' && (
             <>
               <button
                 onClick={() => setActiveNavTab('profile')}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl whitespace-nowrap transition cursor-pointer ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer text-xs sm:text-sm ${
                   activeNavTab === 'profile'
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-blue-700 hover:bg-blue-50/60'
+                    ? 'bg-[#181E4B] text-white shadow-md shadow-[#181E4B]/20 font-bold'
+                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-amber-50/70 font-medium'
                 }`}
               >
                 <User size={15} /> Profile
               </button>
               <button
                 onClick={() => setActiveNavTab('portfolio')}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl whitespace-nowrap transition cursor-pointer ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer text-xs sm:text-sm ${
                   activeNavTab === 'portfolio'
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-blue-700 hover:bg-blue-50/60'
+                    ? 'bg-[#181E4B] text-white shadow-md shadow-[#181E4B]/20 font-bold'
+                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-amber-50/70 font-medium'
                 }`}
               >
                 <FolderGit2 size={15} /> Portfolio & Wishlist
               </button>
               <button
                 onClick={() => setActiveNavTab('assessments')}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl whitespace-nowrap transition cursor-pointer ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer text-xs sm:text-sm ${
                   activeNavTab === 'assessments'
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-blue-700 hover:bg-blue-50/60'
+                    ? 'bg-[#181E4B] text-white shadow-md shadow-[#181E4B]/20 font-bold'
+                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-amber-50/70 font-medium'
                 }`}
               >
                 <Award size={15} /> Assessments
               </button>
               <button
                 onClick={() => setActiveNavTab('library')}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl whitespace-nowrap transition cursor-pointer ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer text-xs sm:text-sm ${
                   activeNavTab === 'library'
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-blue-700 hover:bg-blue-50/60'
+                    ? 'bg-[#181E4B] text-white shadow-md shadow-[#181E4B]/20 font-bold'
+                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-amber-50/70 font-medium'
                 }`}
               >
                 <Video size={15} /> Courses & Faculty
@@ -230,50 +230,50 @@ export const Navbar: React.FC<{ onLogout?: () => void }> = ({ onLogout }) => {
             <>
               <button
                 onClick={() => setActiveNavTab('admin_dashboard')}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl whitespace-nowrap transition cursor-pointer ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer text-xs sm:text-sm ${
                   activeNavTab === 'admin_dashboard'
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-blue-700 hover:bg-blue-50/60'
+                    ? 'bg-[#181E4B] text-white shadow-md shadow-[#181E4B]/20 font-bold'
+                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-amber-50/70 font-medium'
                 }`}
               >
                 <Layers size={15} /> Overview
               </button>
               <button
                 onClick={() => setActiveNavTab('admin_user_approval')}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl whitespace-nowrap transition cursor-pointer ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer text-xs sm:text-sm ${
                   activeNavTab === 'admin_user_approval'
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-blue-700 hover:bg-blue-50/60'
+                    ? 'bg-[#181E4B] text-white shadow-md shadow-[#181E4B]/20 font-bold'
+                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-amber-50/70 font-medium'
                 }`}
               >
                 <UserCheck size={15} /> User Approvals
               </button>
               <button
                 onClick={() => setActiveNavTab('admin_role_management')}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl whitespace-nowrap transition cursor-pointer ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer text-xs sm:text-sm ${
                   activeNavTab === 'admin_role_management'
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-blue-700 hover:bg-blue-50/60'
+                    ? 'bg-[#181E4B] text-white shadow-md shadow-[#181E4B]/20 font-bold'
+                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-amber-50/70 font-medium'
                 }`}
               >
                 <Shield size={15} /> Roles Directory
               </button>
               <button
                 onClick={() => setActiveNavTab('admin_competency_mapping')}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl whitespace-nowrap transition cursor-pointer ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer text-xs sm:text-sm ${
                   activeNavTab === 'admin_competency_mapping'
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-blue-700 hover:bg-blue-50/60'
+                    ? 'bg-[#181E4B] text-white shadow-md shadow-[#181E4B]/20 font-bold'
+                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-amber-50/70 font-medium'
                 }`}
               >
                 <Compass size={15} /> Competency Mapping
               </button>
               <button
                 onClick={() => setActiveNavTab('admin_homepage_publisher')}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl whitespace-nowrap transition cursor-pointer ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer text-xs sm:text-sm ${
                   activeNavTab === 'admin_homepage_publisher'
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-blue-700 hover:bg-blue-50/60'
+                    ? 'bg-[#181E4B] text-white shadow-md shadow-[#181E4B]/20 font-bold'
+                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-amber-50/70 font-medium'
                 }`}
               >
                 <Megaphone size={15} /> Announcements
@@ -285,40 +285,40 @@ export const Navbar: React.FC<{ onLogout?: () => void }> = ({ onLogout }) => {
             <>
               <button
                 onClick={() => setActiveNavTab('trainer_profile')}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl whitespace-nowrap transition cursor-pointer ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer text-xs sm:text-sm ${
                   activeNavTab === 'trainer_profile'
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-blue-700 hover:bg-blue-50/60'
+                    ? 'bg-[#181E4B] text-white shadow-md shadow-[#181E4B]/20 font-bold'
+                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-amber-50/70 font-medium'
                 }`}
               >
                 <UserCheck size={15} /> Profile
               </button>
               <button
                 onClick={() => setActiveNavTab('trainer_questionnaires')}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl whitespace-nowrap transition cursor-pointer ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer text-xs sm:text-sm ${
                   activeNavTab === 'trainer_questionnaires'
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-blue-700 hover:bg-blue-50/60'
+                    ? 'bg-[#181E4B] text-white shadow-md shadow-[#181E4B]/20 font-bold'
+                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-amber-50/70 font-medium'
                 }`}
               >
                 <FileText size={15} /> Questionnaires
               </button>
               <button
                 onClick={() => setActiveNavTab('trainer_monitor')}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl whitespace-nowrap transition cursor-pointer ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer text-xs sm:text-sm ${
                   activeNavTab === 'trainer_monitor'
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-blue-700 hover:bg-blue-50/60'
+                    ? 'bg-[#181E4B] text-white shadow-md shadow-[#181E4B]/20 font-bold'
+                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-amber-50/70 font-medium'
                 }`}
               >
                 <Award size={15} /> My Students & Courses
               </button>
               <button
                 onClick={() => setActiveNavTab('trainer_library_manage')}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl whitespace-nowrap transition cursor-pointer ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer text-xs sm:text-sm ${
                   activeNavTab === 'trainer_library_manage'
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-blue-700 hover:bg-blue-50/60'
+                    ? 'bg-[#181E4B] text-white shadow-md shadow-[#181E4B]/20 font-bold'
+                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-amber-50/70 font-medium'
                 }`}
               >
                 <Video size={15} /> Course Materials

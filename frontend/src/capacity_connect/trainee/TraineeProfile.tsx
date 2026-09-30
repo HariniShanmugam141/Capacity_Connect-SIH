@@ -19,6 +19,14 @@ const GithubIcon: React.FC<{ size?: number; className?: string }> = ({ size = 20
   </svg>
 );
 
+const SUGGESTED_SKILLS = [
+  'Python', 'Docker', 'React.js', 'AWS Cloud', 'Kubernetes', 'TypeScript', 'FastAPI', 'CI/CD'
+];
+
+const SUGGESTED_INTERESTS = [
+  'Generative AI', 'Cloud Architecture', 'DevOps Systems', 'Distributed Computing', 'Cybersecurity'
+];
+
 export const TraineeProfile: React.FC = () => {
   const {
     traineeProfile,
@@ -71,6 +79,17 @@ export const TraineeProfile: React.FC = () => {
   const initials = traineeProfile.fullName
     ? traineeProfile.fullName.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
     : 'TR';
+
+  const profileScore = Math.min(100, Math.round(
+    (traineeProfile.avatar ? 15 : 0) +
+    (traineeProfile.bio ? 15 : 0) +
+    (traineeProfile.resume ? 20 : 0) +
+    (traineeProfile.skills.length > 0 ? 15 : 0) +
+    (traineeProfile.interests.length > 0 ? 10 : 0) +
+    (traineeProfile.qualifications.length > 0 ? 10 : 0) +
+    (traineeProfile.githubProjects && traineeProfile.githubProjects.length > 0 ? 15 : 0) +
+    (traineeProfile.certificates.length > 0 ? 15 : 0)
+  ));
 
   const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -228,28 +247,28 @@ export const TraineeProfile: React.FC = () => {
 
   return (
     <div className="space-y-8 pb-16">
-      {/* Profile Header Card */}
-      <div className="bg-white rounded-3xl p-6 sm:p-7 shadow-[0_12px_30px_-8px_rgba(0,0,0,0.06),0_4px_6px_-2px_rgba(0,0,0,0.02)] border border-slate-200/90 relative overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-500" />
+      {/* Profile Header Card - Jadoo Aesthetic with Floating Snapshot */}
+      <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-jadoo border border-slate-200/90 relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#DF6951] via-[#F1A501] to-[#181E4B]" />
         
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
-            <div className="relative group">
+        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-8">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 flex-1">
+            <div className="relative group shrink-0">
               {traineeProfile.avatar ? (
                 <img
                   src={traineeProfile.avatar}
                   alt={traineeProfile.fullName}
-                  className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover ring-4 ring-slate-100 shadow-md"
+                  className="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl object-cover ring-4 ring-amber-100 shadow-md"
                 />
               ) : (
-                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white flex items-center justify-center text-3xl font-black shadow-md ring-4 ring-slate-100">
+                <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl bg-gradient-to-br from-[#181E4B] to-[#2B356E] text-white flex items-center justify-center text-3xl font-serif font-black shadow-md ring-4 ring-amber-100">
                   {initials}
                 </div>
               )}
 
               {/* Photo Upload Overlay */}
               <label
-                className="absolute inset-0 rounded-2xl bg-slate-900/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center text-white text-[11px] font-semibold cursor-pointer transition-opacity"
+                className="absolute inset-0 rounded-3xl bg-slate-900/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center text-white text-[11px] font-semibold cursor-pointer transition-opacity"
                 title="Upload profile photo"
               >
                 <Camera size={20} className="mb-1" />
@@ -262,41 +281,45 @@ export const TraineeProfile: React.FC = () => {
                 />
               </label>
 
-              <span className="absolute -bottom-1 -right-1 px-2.5 py-0.5 bg-emerald-500 text-white text-[11px] font-bold rounded-full border-2 border-white flex items-center gap-1 shadow-sm">
-                <CheckCircle2 size={11} /> Trainee
+              <span className="absolute -bottom-1 -right-1 px-3 py-1 bg-[#DF6951] text-white text-[11px] font-bold rounded-full border-2 border-white flex items-center gap-1 shadow-sm">
+                <CheckCircle2 size={12} /> Trainee
               </span>
             </div>
 
-            <div className="text-center sm:text-left space-y-1.5">
-              <div className="flex items-center justify-center sm:justify-start gap-3">
-                <h1 className="text-2xl sm:text-3xl font-heading font-black text-slate-900 tracking-tight">
-                  {traineeProfile.fullName}
+            <div className="text-center sm:text-left space-y-2 flex-1">
+              <div className="category-eyebrow">
+                CAPACITY CONNECT TALENT • VERIFIED CANDIDATE
+              </div>
+              
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
+                <h1 className="text-3xl sm:text-4xl font-serif font-bold text-[#181E4B] tracking-tight">
+                  <span className="aesthetic-underline">{traineeProfile.fullName}</span>
                 </h1>
-                <span className="bg-blue-50 text-blue-700 text-xs font-mono font-bold px-2.5 py-0.5 rounded-full border border-blue-200 uppercase tracking-wider">
-                  Verified Trainee
+                <span className="bg-amber-50 text-[#DF6951] text-xs font-semibold px-3 py-1 rounded-full border border-amber-200">
+                  Ready to Deploy
                 </span>
               </div>
               
-              <p className="text-slate-600 font-medium text-sm">
+              <p className="text-[#5E6282] font-medium text-base">
                 {traineeProfile.title || 'Student / Trainee'}
               </p>
 
-              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 text-xs text-slate-500 pt-1">
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 text-xs text-[#5E6282] pt-1">
                 {traineeProfile.location && (
-                  <span className="flex items-center gap-1.5">
-                    <MapPin size={13} className="text-slate-400" />
+                  <span className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200/60">
+                    <MapPin size={13} className="text-[#DF6951]" />
                     {traineeProfile.location}
                   </span>
                 )}
                 {traineeProfile.email && (
-                  <span className="flex items-center gap-1.5">
-                    <Mail size={13} className="text-slate-400" />
+                  <span className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200/60">
+                    <Mail size={13} className="text-[#DF6951]" />
                     {traineeProfile.email}
                   </span>
                 )}
                 {traineeProfile.phone && (
-                  <span className="flex items-center gap-1.5 font-mono">
-                    <Phone size={13} className="text-slate-400" />
+                  <span className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200/60 font-mono">
+                    <Phone size={13} className="text-[#DF6951]" />
                     {traineeProfile.phone}
                   </span>
                 )}
@@ -305,9 +328,9 @@ export const TraineeProfile: React.FC = () => {
                     href={traineeProfile.githubUrl || `https://github.com/${traineeProfile.githubUsername}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex items-center gap-1.5 text-slate-700 hover:text-blue-600 font-mono text-xs font-semibold transition"
+                    className="flex items-center gap-1.5 bg-slate-900 text-white px-2.5 py-1 rounded-lg font-mono text-xs font-semibold hover:bg-slate-800 transition"
                   >
-                    <GithubIcon size={13} className="text-slate-600" />
+                    <GithubIcon size={13} className="text-white" />
                     github.com/{traineeProfile.githubUsername}
                   </a>
                 )}
@@ -315,13 +338,44 @@ export const TraineeProfile: React.FC = () => {
             </div>
           </div>
 
-          <button
-            onClick={() => setShowEditBio(!showEditBio)}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-xl transition border border-indigo-200 self-stretch sm:self-auto justify-center"
-          >
-            <Edit3 size={16} />
-            Edit Profile
-          </button>
+          {/* Right: Floating Jadoo-style Candidate Snapshot Card */}
+          <div className="w-full lg:w-80 bg-gradient-to-b from-[#FFFDF9] to-[#FBF8F2] rounded-2xl p-5 border border-amber-200/70 shadow-md flex flex-col justify-between gap-4 shrink-0">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#DF6951]">Candidate Readiness</span>
+                <span className="text-xs font-bold text-[#181E4B]">{profileScore}% Complete</span>
+              </div>
+              <div className="w-full h-2 bg-amber-100/70 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-[#DF6951] to-[#F1A501] rounded-full transition-all duration-500"
+                  style={{ width: `${profileScore}%` }}
+                />
+              </div>
+
+              <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-amber-200/50 text-center">
+                <div className="bg-white/90 p-2 rounded-xl border border-amber-100 shadow-2xs">
+                  <div className="text-base font-bold text-[#181E4B]">{traineeProfile.skills.length}</div>
+                  <div className="text-[10px] text-[#5E6282] uppercase font-semibold">Skills</div>
+                </div>
+                <div className="bg-white/90 p-2 rounded-xl border border-amber-100 shadow-2xs">
+                  <div className="text-base font-bold text-[#181E4B]">{traineeProfile.githubProjects?.length || 0}</div>
+                  <div className="text-[10px] text-[#5E6282] uppercase font-semibold">Repos</div>
+                </div>
+                <div className="bg-white/90 p-2 rounded-xl border border-amber-100 shadow-2xs">
+                  <div className="text-base font-bold text-[#181E4B]">{traineeProfile.certificates.length}</div>
+                  <div className="text-[10px] text-[#5E6282] uppercase font-semibold">Certs</div>
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowEditBio(!showEditBio)}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-bold text-white bg-gradient-to-r from-[#DF6951] to-[#F1A501] hover:brightness-105 rounded-xl shadow-md shadow-orange-500/20 transition cursor-pointer"
+            >
+              <Edit3 size={14} />
+              {showEditBio ? 'Close Editor' : 'Edit Profile & Bio'}
+            </button>
+          </div>
         </div>
 
         {/* Bio Section */}
@@ -394,22 +448,25 @@ export const TraineeProfile: React.FC = () => {
       {/* 3D Distinct Option Cards: Resume, Skills, Interests */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        {/* CARD 1: RESUME (3D Blue elevated style) */}
-        <div className="relative bg-gradient-to-b from-white to-blue-50/30 rounded-2xl p-5 border border-blue-200/80 shadow-[0_10px_25px_-5px_rgba(59,130,246,0.12),0_4px_6px_-2px_rgba(0,0,0,0.03)] hover:-translate-y-1 hover:shadow-[0_16px_32px_-6px_rgba(59,130,246,0.2)] transition-all duration-300 flex flex-col justify-between">
+        {/* CARD 1: RESUME (Jadoo elevated style) */}
+        <div className="relative bg-gradient-to-b from-white to-blue-50/30 rounded-3xl p-6 border border-blue-200/80 shadow-md hover:-translate-y-1 hover:shadow-lg transition-all duration-300 flex flex-col justify-between">
           <div>
+            <div className="text-[10px] font-bold tracking-widest text-[#DF6951] uppercase mb-1">
+              DOCUMENTATION
+            </div>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center shadow-md shadow-blue-500/25">
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#181E4B] to-[#2B356E] text-white flex items-center justify-center shadow-md">
                   <FileText size={18} />
                 </div>
                 <div>
-                  <h3 className="font-heading font-extrabold text-slate-900 text-sm">Resume</h3>
-                  <span className="text-[10px] font-mono text-blue-600 font-bold uppercase">ATS Verified</span>
+                  <h3 className="font-serif font-bold text-[#181E4B] text-base">Resume & CV</h3>
+                  <span className="text-[10px] font-mono text-[#DF6951] font-bold uppercase">ATS Verified</span>
                 </div>
               </div>
 
               {traineeProfile.resume?.atsScore && (
-                <span className="px-2 py-0.5 bg-blue-100 text-blue-800 font-mono font-bold text-xs rounded-lg border border-blue-200 flex items-center gap-1 shadow-xs">
+                <span className="px-2.5 py-0.5 bg-amber-50 text-[#DF6951] font-bold text-xs rounded-full border border-amber-200 flex items-center gap-1 shadow-2xs">
                   <ShieldCheck size={12} /> {traineeProfile.resume.atsScore}% Match
                 </span>
               )}
@@ -417,39 +474,39 @@ export const TraineeProfile: React.FC = () => {
 
             {traineeProfile.resume ? (
               <div className="space-y-3">
-                <div className="p-3 bg-white rounded-xl border border-blue-100 shadow-xs">
+                <div className="p-3 bg-white rounded-xl border border-blue-100 shadow-2xs">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-800 truncate max-w-[170px]">
                       {traineeProfile.resume.fileName}
                     </span>
-                    <span className="text-[10px] font-mono text-slate-500 font-medium">{traineeProfile.resume.fileSize}</span>
+                    <span className="text-[10px] font-mono text-[#5E6282] font-medium">{traineeProfile.resume.fileSize}</span>
                   </div>
                 </div>
 
                 <div className="flex flex-wrap gap-1">
                   {traineeProfile.resume.parsedSkills.slice(0, 6).map((sk, idx) => (
-                    <span key={idx} className="px-2 py-0.5 bg-white text-blue-700 font-mono rounded-md text-[10px] font-semibold border border-blue-100 shadow-2xs">
+                    <span key={idx} className="px-2 py-0.5 bg-white text-[#181E4B] font-mono rounded-md text-[10px] font-semibold border border-blue-100 shadow-2xs">
                       {sk}
                     </span>
                   ))}
                   {traineeProfile.resume.parsedSkills.length > 6 && (
-                    <span className="px-1.5 py-0.5 text-slate-400 text-[10px]">
+                    <span className="px-1.5 py-0.5 text-[#5E6282] text-[10px]">
                       +{traineeProfile.resume.parsedSkills.length - 6} more
                     </span>
                   )}
                 </div>
               </div>
             ) : (
-              <div className="text-center py-5 border-2 border-dashed border-blue-200 rounded-xl bg-blue-50/40">
-                <Upload size={20} className="text-blue-500 mx-auto mb-1.5" />
-                <p className="text-xs text-slate-600 font-semibold">Upload Resume</p>
-                <p className="text-[10px] text-slate-400 mt-0.5">PDF or DOCX</p>
+              <div className="text-center py-5 border-2 border-dashed border-amber-200 rounded-2xl bg-amber-50/20">
+                <Upload size={20} className="text-[#DF6951] mx-auto mb-1.5" />
+                <p className="text-xs text-[#181E4B] font-semibold">Upload Your Resume</p>
+                <p className="text-[10px] text-[#5E6282] mt-0.5">PDF or Word format supported</p>
               </div>
             )}
           </div>
 
-          <div className="mt-4 pt-3 border-t border-blue-100">
-            <label className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-blue-700 bg-white hover:bg-blue-50 rounded-xl cursor-pointer transition border border-blue-200 shadow-xs">
+          <div className="mt-4 pt-3 border-t border-slate-100">
+            <label className="w-full flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-bold text-[#181E4B] bg-white hover:bg-slate-50 rounded-xl cursor-pointer transition border border-slate-200 shadow-2xs">
               <Upload size={13} />
               {traineeProfile.resume ? 'Replace Resume' : 'Attach Resume'}
               <input type="file" accept=".pdf,.doc,.docx" onChange={handleFileUpload} className="hidden" />
@@ -457,41 +514,61 @@ export const TraineeProfile: React.FC = () => {
           </div>
         </div>
 
-        {/* CARD 2: SKILLS (3D Emerald elevated style) */}
-        <div className="relative bg-gradient-to-b from-white to-emerald-50/30 rounded-2xl p-5 border border-emerald-200/80 shadow-[0_10px_25px_-5px_rgba(16,185,129,0.12),0_4px_6px_-2px_rgba(0,0,0,0.03)] hover:-translate-y-1 hover:shadow-[0_16px_32px_-6px_rgba(16,185,129,0.2)] transition-all duration-300 flex flex-col justify-between">
+        {/* CARD 2: SKILLS (Jadoo elevated style) */}
+        <div className="relative bg-gradient-to-b from-white to-emerald-50/30 rounded-3xl p-6 border border-emerald-200/80 shadow-md hover:-translate-y-1 hover:shadow-lg transition-all duration-300 flex flex-col justify-between">
           <div>
+            <div className="text-[10px] font-bold tracking-widest text-[#DF6951] uppercase mb-1">
+              COMPETENCIES
+            </div>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center shadow-md shadow-emerald-500/25">
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white flex items-center justify-center shadow-md">
                   <Sparkles size={18} />
                 </div>
                 <div>
-                  <h3 className="font-heading font-extrabold text-slate-900 text-sm">Skills</h3>
+                  <h3 className="font-serif font-bold text-[#181E4B] text-base">Skills & Stacks</h3>
                   <span className="text-[10px] font-mono text-emerald-600 font-bold uppercase">{traineeProfile.skills.length} listed</span>
                 </div>
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-1.5 max-h-44 overflow-y-auto pr-1">
-              {traineeProfile.skills.map(skill => (
-                <div
-                  key={skill.id}
-                  className="flex items-center gap-1.5 px-2.5 py-1 bg-white hover:bg-emerald-50/50 rounded-lg border border-emerald-100 shadow-2xs transition group"
-                >
-                  <span className="text-xs font-semibold text-slate-800">{skill.name}</span>
-                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded font-bold bg-emerald-100 text-emerald-700">
-                    {skill.level}
-                  </span>
-                  <button
-                    onClick={() => deleteSkill(skill.id)}
-                    className="text-slate-300 hover:text-rose-500 transition opacity-0 group-hover:opacity-100 cursor-pointer"
+            <div className="space-y-3">
+              <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto pr-1">
+                {traineeProfile.skills.map(skill => (
+                  <div
+                    key={skill.id}
+                    className="flex items-center gap-1.5 px-2.5 py-1 bg-white hover:bg-emerald-50/50 rounded-lg border border-emerald-200 shadow-2xs transition group"
                   >
-                    <Trash2 size={11} />
-                  </button>
-                </div>
-              ))}
+                    <span className="text-xs font-semibold text-slate-800">{skill.name}</span>
+                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded font-bold bg-emerald-100 text-emerald-700">
+                      {skill.level}
+                    </span>
+                    <button
+                      onClick={() => deleteSkill(skill.id)}
+                      className="text-slate-300 hover:text-rose-500 transition opacity-0 group-hover:opacity-100 cursor-pointer"
+                    >
+                      <Trash2 size={11} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+
               {traineeProfile.skills.length === 0 && (
-                <p className="text-xs text-slate-400 italic py-4">No skills added yet.</p>
+                <div className="p-3 bg-white/90 rounded-2xl border border-emerald-100/80">
+                  <p className="text-[11px] font-medium text-[#5E6282] mb-2">Quick add suggested skills:</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {SUGGESTED_SKILLS.map(s => (
+                      <button
+                        key={s}
+                        onClick={() => addSkill({ name: s, level: 'Intermediate', category: 'Core Engineering' })}
+                        className="flex items-center gap-1 px-2 py-0.5 bg-emerald-50/70 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-md text-[11px] font-medium transition cursor-pointer"
+                      >
+                        <Plus size={10} />
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
           </div>
@@ -509,7 +586,7 @@ export const TraineeProfile: React.FC = () => {
                     setNewSkillName('');
                   }
                 }}
-                className="flex-1 px-2.5 py-1 text-xs border border-emerald-200 rounded-lg bg-white outline-none focus:ring-1 focus:ring-emerald-500"
+                className="flex-1 px-3 py-1.5 text-xs border border-emerald-200 rounded-xl bg-white outline-none focus:ring-2 focus:ring-emerald-500"
               />
               <button
                 onClick={() => {
@@ -518,7 +595,7 @@ export const TraineeProfile: React.FC = () => {
                     setNewSkillName('');
                   }
                 }}
-                className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-xs cursor-pointer"
+                className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-2xs cursor-pointer"
               >
                 Add
               </button>
@@ -526,38 +603,58 @@ export const TraineeProfile: React.FC = () => {
           </div>
         </div>
 
-        {/* CARD 3: INTERESTS (3D Amber elevated style) */}
-        <div className="relative bg-gradient-to-b from-white to-amber-50/30 rounded-2xl p-5 border border-amber-200/80 shadow-[0_10px_25px_-5px_rgba(245,158,11,0.12),0_4px_6px_-2px_rgba(0,0,0,0.03)] hover:-translate-y-1 hover:shadow-[0_16px_32px_-6px_rgba(245,158,11,0.2)] transition-all duration-300 flex flex-col justify-between">
+        {/* CARD 3: INTERESTS (Jadoo elevated style) */}
+        <div className="relative bg-gradient-to-b from-white to-amber-50/30 rounded-3xl p-6 border border-amber-200/80 shadow-md hover:-translate-y-1 hover:shadow-lg transition-all duration-300 flex flex-col justify-between">
           <div>
+            <div className="text-[10px] font-bold tracking-widest text-[#DF6951] uppercase mb-1">
+              FOCUS & PASSIONS
+            </div>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 text-white flex items-center justify-center shadow-md shadow-amber-500/25">
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#DF6951] to-[#F1A501] text-white flex items-center justify-center shadow-md">
                   <BookOpen size={18} />
                 </div>
                 <div>
-                  <h3 className="font-heading font-extrabold text-slate-900 text-sm">Interests</h3>
-                  <span className="text-[10px] font-mono text-amber-600 font-bold uppercase">{traineeProfile.interests.length} areas</span>
+                  <h3 className="font-serif font-bold text-[#181E4B] text-base">Areas of Interest</h3>
+                  <span className="text-[10px] font-mono text-[#DF6951] font-bold uppercase">{traineeProfile.interests.length} areas</span>
                 </div>
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-1.5 max-h-44 overflow-y-auto">
-              {traineeProfile.interests.map((interest, i) => (
-                <span
-                  key={i}
-                  className="flex items-center gap-1 px-2.5 py-1 bg-white text-amber-900 rounded-lg text-xs font-semibold border border-amber-200 shadow-2xs group"
-                >
-                  {interest}
-                  <button
-                    onClick={() => deleteInterest(interest)}
-                    className="text-amber-400 hover:text-rose-500 opacity-60 group-hover:opacity-100 ml-1 cursor-pointer"
+            <div className="space-y-3">
+              <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto">
+                {traineeProfile.interests.map((interest, i) => (
+                  <span
+                    key={i}
+                    className="flex items-center gap-1 px-2.5 py-1 bg-white text-amber-900 rounded-lg text-xs font-semibold border border-amber-200 shadow-2xs group"
                   >
-                    ×
-                  </button>
-                </span>
-              ))}
+                    {interest}
+                    <button
+                      onClick={() => deleteInterest(interest)}
+                      className="text-amber-400 hover:text-rose-500 opacity-60 group-hover:opacity-100 ml-1 cursor-pointer"
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
+
               {traineeProfile.interests.length === 0 && (
-                <p className="text-xs text-slate-400 italic py-4">No interests added yet.</p>
+                <div className="p-3 bg-white/90 rounded-2xl border border-amber-100/80">
+                  <p className="text-[11px] font-medium text-[#5E6282] mb-2">Quick add trending interests:</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {SUGGESTED_INTERESTS.map(item => (
+                      <button
+                        key={item}
+                        onClick={() => addInterest(item)}
+                        className="flex items-center gap-1 px-2 py-0.5 bg-amber-50/70 hover:bg-amber-100 text-amber-900 border border-amber-200 rounded-md text-[11px] font-medium transition cursor-pointer"
+                      >
+                        <Plus size={10} />
+                        {item}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
           </div>
@@ -594,22 +691,25 @@ export const TraineeProfile: React.FC = () => {
       </div>
 
       {/* 3D Distinct Option Card: GITHUB PROJECTS & REPOSITORIES */}
-      <div className="relative bg-gradient-to-b from-white to-slate-50/60 rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-[0_12px_30px_-8px_rgba(30,41,59,0.12),0_4px_6px_-2px_rgba(0,0,0,0.03)] hover:-translate-y-0.5 hover:shadow-xl transition-all duration-300">
+      <div className="relative bg-gradient-to-b from-white to-slate-50/60 rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-jadoo hover:-translate-y-0.5 hover:shadow-xl transition-all duration-300">
+        <div className="category-eyebrow mb-1">
+          OPEN SOURCE ACTIVITY & REPOSITORIES
+        </div>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 text-white flex items-center justify-center shadow-lg shadow-slate-900/25">
-              <GithubIcon size={22} />
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#181E4B] via-slate-800 to-indigo-950 text-white flex items-center justify-center shadow-lg shadow-slate-900/25">
+              <GithubIcon size={24} />
             </div>
             <div>
               <div className="flex items-center gap-2.5">
-                <h3 className="font-extrabold text-slate-900 text-lg tracking-tight">GitHub Projects</h3>
+                <h3 className="font-serif font-bold text-[#181E4B] text-xl tracking-tight">GitHub Projects</h3>
                 {traineeProfile.githubProjects && traineeProfile.githubProjects.length > 0 && (
-                  <span className="text-[11px] px-2.5 py-0.5 bg-slate-900 text-white rounded-full font-bold">
+                  <span className="text-[11px] px-2.5 py-0.5 bg-[#181E4B] text-white rounded-full font-bold">
                     {traineeProfile.githubProjects.length} Repos
                   </span>
                 )}
               </div>
-              <p className="text-xs text-slate-500 font-medium mt-0.5">
+              <p className="text-xs text-[#5E6282] font-medium mt-0.5">
                 {traineeProfile.githubUsername ? (
                   <span>
                     Linked account:{' '}
@@ -617,13 +717,13 @@ export const TraineeProfile: React.FC = () => {
                       href={traineeProfile.githubUrl || `https://github.com/${traineeProfile.githubUsername}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-blue-600 hover:underline font-bold"
+                      className="text-[#DF6951] hover:underline font-bold"
                     >
                       @{traineeProfile.githubUsername}
                     </a>
                   </span>
                 ) : (
-                  'Submit your GitHub profile link to showcase your live projects'
+                  'Submit your GitHub profile link to showcase your live repositories and commits'
                 )}
               </p>
             </div>
@@ -637,13 +737,13 @@ export const TraineeProfile: React.FC = () => {
                 placeholder="https://github.com/username"
                 value={githubInput}
                 onChange={e => setGithubInput(e.target.value)}
-                className="w-full sm:w-72 px-3.5 py-2 text-xs sm:text-sm bg-white border border-slate-300 rounded-xl outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition shadow-xs"
+                className="w-full sm:w-72 px-3.5 py-2 text-xs sm:text-sm bg-white border border-slate-300 rounded-xl outline-none focus:border-[#DF6951] focus:ring-2 focus:ring-amber-100 transition shadow-xs"
               />
             </div>
             <button
               type="submit"
               disabled={isSyncingGitHub || !githubInput.trim()}
-              className="flex items-center justify-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md transition cursor-pointer"
+              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#DF6951] to-[#F1A501] hover:brightness-105 disabled:opacity-50 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md transition cursor-pointer"
             >
               <RefreshCw size={14} className={isSyncingGitHub ? 'animate-spin' : ''} />
               <span>{isSyncingGitHub ? 'Syncing...' : 'Sync Projects'}</span>
@@ -778,21 +878,24 @@ export const TraineeProfile: React.FC = () => {
 
       {/* Row: Qualifications & Work Experience */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* QUALIFICATIONS (3D Indigo) */}
-        <div className="relative bg-gradient-to-b from-white to-indigo-50/30 rounded-2xl p-6 border border-indigo-200/80 shadow-[0_10px_25px_-5px_rgba(99,102,241,0.12),0_4px_6px_-2px_rgba(0,0,0,0.03)] hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+        {/* QUALIFICATIONS (Jadoo styled) */}
+        <div className="relative bg-gradient-to-b from-white to-indigo-50/20 rounded-3xl p-6 sm:p-7 border border-indigo-200/80 shadow-md hover:-translate-y-0.5 hover:shadow-xl transition-all duration-300">
+          <div className="text-[10px] font-bold tracking-widest text-[#DF6951] uppercase mb-1">
+            EDUCATION
+          </div>
           <div className="flex items-center justify-between mb-5">
-            <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white flex items-center justify-center shadow-md shadow-indigo-500/25">
-                <GraduationCap size={18} />
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#181E4B] to-[#2B356E] text-white flex items-center justify-center shadow-md">
+                <GraduationCap size={20} />
               </div>
               <div>
-                <h3 className="font-heading font-extrabold text-slate-900 text-base">Qualifications</h3>
-                <span className="text-[10px] font-mono text-indigo-600 font-bold uppercase">{traineeProfile.qualifications.length} records</span>
+                <h3 className="font-serif font-bold text-[#181E4B] text-lg">Qualifications</h3>
+                <span className="text-[10px] font-mono text-[#DF6951] font-bold uppercase">{traineeProfile.qualifications.length} records</span>
               </div>
             </div>
             <button
               onClick={() => setShowQualModal(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-indigo-700 bg-white hover:bg-indigo-50 rounded-xl transition border border-indigo-200 shadow-xs cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold text-[#181E4B] bg-white hover:bg-slate-50 rounded-xl transition border border-slate-200 shadow-2xs cursor-pointer"
             >
               <Plus size={13} /> Add
             </button>
@@ -800,16 +903,16 @@ export const TraineeProfile: React.FC = () => {
 
           <div className="space-y-3">
             {traineeProfile.qualifications.map(qual => (
-              <div key={qual.id} className="p-4 rounded-xl border border-indigo-100 bg-white relative group shadow-2xs hover:shadow-sm transition">
+              <div key={qual.id} className="p-4 rounded-2xl border border-indigo-100 bg-white relative group shadow-2xs hover:shadow-sm transition">
                 <button
                   onClick={() => deleteQualification(qual.id)}
                   className="absolute top-3 right-3 text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition cursor-pointer"
                 >
                   <Trash2 size={13} />
                 </button>
-                <h4 className="font-heading font-bold text-sm text-slate-900">{qual.degree}</h4>
-                <p className="text-xs font-medium text-indigo-600 mt-0.5">{qual.institution}</p>
-                <div className="flex items-center gap-3 text-xs text-slate-500 mt-2">
+                <h4 className="font-serif font-bold text-sm text-[#181E4B]">{qual.degree}</h4>
+                <p className="text-xs font-medium text-[#DF6951] mt-0.5">{qual.institution}</p>
+                <div className="flex items-center gap-3 text-xs text-[#5E6282] mt-2">
                   <span className="flex items-center gap-1 font-mono text-[11px]">
                     <Calendar size={12} className="text-slate-400" />
                     {qual.startYear} – {qual.endYear}
@@ -823,26 +926,29 @@ export const TraineeProfile: React.FC = () => {
               </div>
             ))}
             {traineeProfile.qualifications.length === 0 && (
-              <p className="text-xs text-slate-400 italic py-6 text-center">No qualifications added yet.</p>
+              <p className="text-xs text-[#5E6282] italic py-6 text-center">No qualifications added yet.</p>
             )}
           </div>
         </div>
 
-        {/* WORK EXPERIENCE (3D Purple) */}
-        <div className="relative bg-gradient-to-b from-white to-purple-50/30 rounded-2xl p-6 border border-purple-200/80 shadow-[0_10px_25px_-5px_rgba(168,85,247,0.12),0_4px_6px_-2px_rgba(0,0,0,0.03)] hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+        {/* WORK EXPERIENCE (Jadoo styled) */}
+        <div className="relative bg-gradient-to-b from-white to-purple-50/20 rounded-3xl p-6 sm:p-7 border border-purple-200/80 shadow-md hover:-translate-y-0.5 hover:shadow-xl transition-all duration-300">
+          <div className="text-[10px] font-bold tracking-widest text-[#DF6951] uppercase mb-1">
+            CAREER HISTORY
+          </div>
           <div className="flex items-center justify-between mb-5">
-            <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-fuchsia-600 text-white flex items-center justify-center shadow-md shadow-purple-500/25">
-                <Briefcase size={18} />
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#181E4B] to-purple-900 text-white flex items-center justify-center shadow-md">
+                <Briefcase size={20} />
               </div>
               <div>
-                <h3 className="font-heading font-extrabold text-slate-900 text-base">Work Experience</h3>
-                <span className="text-[10px] font-mono text-purple-600 font-bold uppercase">{traineeProfile.workExperience.length} roles</span>
+                <h3 className="font-serif font-bold text-[#181E4B] text-lg">Work Experience</h3>
+                <span className="text-[10px] font-mono text-[#DF6951] font-bold uppercase">{traineeProfile.workExperience.length} roles</span>
               </div>
             </div>
             <button
               onClick={() => setShowExpModal(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-purple-700 bg-white hover:bg-purple-50 rounded-xl transition border border-purple-200 shadow-xs cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold text-[#181E4B] bg-white hover:bg-slate-50 rounded-xl transition border border-slate-200 shadow-2xs cursor-pointer"
             >
               <Plus size={13} /> Add
             </button>
@@ -850,7 +956,7 @@ export const TraineeProfile: React.FC = () => {
 
           <div className="space-y-3">
             {traineeProfile.workExperience.map(exp => (
-              <div key={exp.id} className="p-4 rounded-xl border border-purple-100 bg-white relative group shadow-2xs hover:shadow-sm transition">
+              <div key={exp.id} className="p-4 rounded-2xl border border-purple-100 bg-white relative group shadow-2xs hover:shadow-sm transition">
                 <button
                   onClick={() => deleteWorkExperience(exp.id)}
                   className="absolute top-3 right-3 text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition cursor-pointer"
@@ -858,22 +964,22 @@ export const TraineeProfile: React.FC = () => {
                   <Trash2 size={13} />
                 </button>
                 <div className="flex items-center gap-2">
-                  <h4 className="font-heading font-bold text-sm text-slate-900">{exp.title}</h4>
+                  <h4 className="font-serif font-bold text-sm text-[#181E4B]">{exp.title}</h4>
                   {exp.current && (
                     <span className="text-[9px] font-mono px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full font-bold">
                       Current
                     </span>
                   )}
                 </div>
-                <p className="text-xs font-semibold text-purple-700 mt-0.5">
+                <p className="text-xs font-semibold text-[#DF6951] mt-0.5">
                   {exp.company} • {exp.location}
                 </p>
                 <p className="text-[11px] font-mono text-slate-400 mt-1">{exp.startDate} – {exp.endDate}</p>
-                <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">{exp.description}</p>
+                <p className="text-xs text-[#5E6282] mt-1.5 leading-relaxed">{exp.description}</p>
               </div>
             ))}
             {traineeProfile.workExperience.length === 0 && (
-              <p className="text-xs text-slate-400 italic py-6 text-center">No work experience added yet.</p>
+              <p className="text-xs text-[#5E6282] italic py-6 text-center">No work experience added yet.</p>
             )}
           </div>
         </div>
@@ -881,21 +987,24 @@ export const TraineeProfile: React.FC = () => {
 
       {/* Row: Certificates & Enrolled Courses */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* CERTIFICATES (3D Rose) */}
-        <div className="relative bg-gradient-to-b from-white to-rose-50/30 rounded-2xl p-6 border border-rose-200/80 shadow-[0_10px_25px_-5px_rgba(244,63,94,0.12),0_4px_6px_-2px_rgba(0,0,0,0.03)] hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+        {/* CERTIFICATES (Jadoo styled) */}
+        <div className="relative bg-gradient-to-b from-white to-rose-50/20 rounded-3xl p-6 sm:p-7 border border-rose-200/80 shadow-md hover:-translate-y-0.5 hover:shadow-xl transition-all duration-300">
+          <div className="text-[10px] font-bold tracking-widest text-[#DF6951] uppercase mb-1">
+            CREDENTIALS
+          </div>
           <div className="flex items-center justify-between mb-5">
-            <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-pink-600 text-white flex items-center justify-center shadow-md shadow-rose-500/25">
-                <Award size={18} />
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#DF6951] to-rose-600 text-white flex items-center justify-center shadow-md">
+                <Award size={20} />
               </div>
               <div>
-                <h3 className="font-heading font-extrabold text-slate-900 text-base">Certificates</h3>
-                <span className="text-[10px] font-mono text-rose-600 font-bold uppercase">{traineeProfile.certificates.length} credentials</span>
+                <h3 className="font-serif font-bold text-[#181E4B] text-lg">Certifications</h3>
+                <span className="text-[10px] font-mono text-[#DF6951] font-bold uppercase">{traineeProfile.certificates.length} credentials</span>
               </div>
             </div>
             <button
               onClick={() => setShowCertModal(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-rose-700 bg-white hover:bg-rose-50 rounded-xl transition border border-rose-200 shadow-xs cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold text-[#181E4B] bg-white hover:bg-slate-50 rounded-xl transition border border-slate-200 shadow-2xs cursor-pointer"
             >
               <Plus size={13} /> Add
             </button>
@@ -903,35 +1012,38 @@ export const TraineeProfile: React.FC = () => {
 
           <div className="space-y-3">
             {traineeProfile.certificates.map(cert => (
-              <div key={cert.id} className="p-3.5 rounded-xl border border-rose-100 bg-white shadow-2xs hover:shadow-sm transition flex items-center justify-between">
+              <div key={cert.id} className="p-4 rounded-2xl border border-rose-100 bg-white shadow-2xs hover:shadow-sm transition flex items-center justify-between">
                 <div className="space-y-0.5">
                   <div className="flex items-center gap-2">
-                    <h4 className="font-heading font-bold text-sm text-slate-900">{cert.title}</h4>
+                    <h4 className="font-serif font-bold text-sm text-[#181E4B]">{cert.title}</h4>
                     <span className="text-[9px] font-mono px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full font-bold">
                       {cert.verificationStatus}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-500 font-medium">
+                  <p className="text-xs text-[#5E6282] font-medium">
                     {cert.issuer} • <span className="font-mono">{cert.issueDate}</span>
                   </p>
                 </div>
               </div>
             ))}
             {traineeProfile.certificates.length === 0 && (
-              <p className="text-xs text-slate-400 italic py-6 text-center">No certificates added yet.</p>
+              <p className="text-xs text-[#5E6282] italic py-6 text-center">No certificates added yet.</p>
             )}
           </div>
         </div>
 
-        {/* ENROLLED COURSES (3D Cyan) */}
-        <div className="relative bg-gradient-to-b from-white to-cyan-50/30 rounded-2xl p-6 border border-cyan-200/80 shadow-[0_10px_25px_-5px_rgba(6,182,212,0.12),0_4px_6px_-2px_rgba(0,0,0,0.03)] hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+        {/* ENROLLED COURSES (Jadoo styled) */}
+        <div className="relative bg-gradient-to-b from-white to-cyan-50/20 rounded-3xl p-6 sm:p-7 border border-cyan-200/80 shadow-md hover:-translate-y-0.5 hover:shadow-xl transition-all duration-300">
+          <div className="text-[10px] font-bold tracking-widest text-[#DF6951] uppercase mb-1">
+            CURRICULUM
+          </div>
           <div className="flex items-center justify-between mb-5">
-            <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 text-white flex items-center justify-center shadow-md shadow-cyan-500/25">
-                <BookOpen size={18} />
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#181E4B] to-cyan-800 text-white flex items-center justify-center shadow-md">
+                <BookOpen size={20} />
               </div>
               <div>
-                <h3 className="font-heading font-extrabold text-slate-900 text-base">Courses</h3>
+                <h3 className="font-serif font-bold text-[#181E4B] text-lg">Active Courses</h3>
                 <span className="text-[10px] font-mono text-cyan-600 font-bold uppercase">{traineeProfile.enrolledCourses.length} active</span>
               </div>
             </div>
@@ -942,11 +1054,11 @@ export const TraineeProfile: React.FC = () => {
 
           <div className="space-y-3">
             {traineeProfile.enrolledCourses.map(course => (
-              <div key={course.id} className="p-3.5 rounded-xl border border-cyan-100 bg-white shadow-2xs hover:shadow-sm transition space-y-2">
+              <div key={course.id} className="p-4 rounded-2xl border border-cyan-100 bg-white shadow-2xs hover:shadow-sm transition space-y-2">
                 <div className="flex items-start justify-between">
                   <div>
-                    <h4 className="font-heading font-bold text-sm text-slate-900">{course.title}</h4>
-                    <p className="text-xs text-slate-500 mt-0.5">
+                    <h4 className="font-serif font-bold text-sm text-[#181E4B]">{course.title}</h4>
+                    <p className="text-xs text-[#5E6282] mt-0.5">
                       {course.trainerName} • {course.category}
                     </p>
                   </div>
@@ -962,7 +1074,7 @@ export const TraineeProfile: React.FC = () => {
               </div>
             ))}
             {traineeProfile.enrolledCourses.length === 0 && (
-              <p className="text-xs text-slate-400 italic py-6 text-center">No enrolled courses yet. Check Courses & Faculty.</p>
+              <p className="text-xs text-[#5E6282] italic py-6 text-center">No enrolled courses yet. Check Courses & Faculty.</p>
             )}
           </div>
         </div>
@@ -970,15 +1082,18 @@ export const TraineeProfile: React.FC = () => {
 
       {/* Row: MCQs Attempted & Feedback on Courses */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* MCQs ATTEMPTED (3D Emerald) */}
-        <div className="relative bg-gradient-to-b from-white to-emerald-50/30 rounded-2xl p-6 border border-emerald-200/80 shadow-[0_10px_25px_-5px_rgba(168,85,247,0.12),0_4px_6px_-2px_rgba(0,0,0,0.03)] hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+        {/* MCQs ATTEMPTED (Jadoo styled) */}
+        <div className="relative bg-gradient-to-b from-white to-emerald-50/20 rounded-3xl p-6 sm:p-7 border border-emerald-200/80 shadow-md hover:-translate-y-0.5 hover:shadow-xl transition-all duration-300">
+          <div className="text-[10px] font-bold tracking-widest text-[#DF6951] uppercase mb-1">
+            EVALUATION
+          </div>
           <div className="flex items-center justify-between mb-5">
-            <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center shadow-md shadow-emerald-500/25">
-                <CheckCircle2 size={18} />
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white flex items-center justify-center shadow-md">
+                <CheckCircle2 size={20} />
               </div>
               <div>
-                <h3 className="font-heading font-extrabold text-slate-900 text-base">Assessments</h3>
+                <h3 className="font-serif font-bold text-[#181E4B] text-lg">Assessments</h3>
                 <span className="text-[10px] font-mono text-emerald-600 font-bold uppercase">{traineeProfile.mcqsAttempted.length} completed</span>
               </div>
             </div>
@@ -986,17 +1101,17 @@ export const TraineeProfile: React.FC = () => {
 
           <div className="space-y-3">
             {traineeProfile.mcqsAttempted.map(mcq => (
-              <div key={mcq.id} className="p-3.5 rounded-xl border border-emerald-100 bg-white shadow-2xs hover:shadow-sm transition flex items-center justify-between">
+              <div key={mcq.id} className="p-4 rounded-2xl border border-emerald-100 bg-white shadow-2xs hover:shadow-sm transition flex items-center justify-between">
                 <div className="space-y-0.5">
                   <div className="flex items-center gap-2">
-                    <h4 className="font-heading font-bold text-sm text-slate-900">{mcq.title}</h4>
+                    <h4 className="font-serif font-bold text-sm text-[#181E4B]">{mcq.title}</h4>
                     <span className={`text-[9px] font-mono px-2 py-0.5 rounded-full font-bold ${
                       mcq.passed ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
                     }`}>
                       {mcq.passed ? 'Passed' : 'Needs Review'}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-[#5E6282]">
                     {mcq.subject} • {mcq.trainerName}
                   </p>
                 </div>
@@ -1008,26 +1123,29 @@ export const TraineeProfile: React.FC = () => {
               </div>
             ))}
             {traineeProfile.mcqsAttempted.length === 0 && (
-              <p className="text-xs text-slate-400 italic py-6 text-center">No assessments completed yet.</p>
+              <p className="text-xs text-[#5E6282] italic py-6 text-center">No assessments completed yet.</p>
             )}
           </div>
         </div>
 
-        {/* FEEDBACKS ON COURSES (3D Orange) */}
-        <div className="relative bg-gradient-to-b from-white to-orange-50/30 rounded-2xl p-6 border border-orange-200/80 shadow-[0_10px_25px_-5px_rgba(249,115,22,0.12),0_4px_6px_-2px_rgba(0,0,0,0.03)] hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+        {/* FEEDBACKS ON COURSES (Jadoo styled) */}
+        <div className="relative bg-gradient-to-b from-white to-amber-50/20 rounded-3xl p-6 sm:p-7 border border-amber-200/80 shadow-md hover:-translate-y-0.5 hover:shadow-xl transition-all duration-300">
+          <div className="text-[10px] font-bold tracking-widest text-[#DF6951] uppercase mb-1">
+            REVIEWS
+          </div>
           <div className="flex items-center justify-between mb-5">
-            <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 text-white flex items-center justify-center shadow-md shadow-orange-500/25">
-                <MessageSquare size={18} />
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#DF6951] to-[#F1A501] text-white flex items-center justify-center shadow-md">
+                <MessageSquare size={20} />
               </div>
               <div>
-                <h3 className="font-heading font-extrabold text-slate-900 text-base">Feedback</h3>
-                <span className="text-[10px] font-mono text-orange-600 font-bold uppercase">{traineeProfile.feedbacks.length} submitted</span>
+                <h3 className="font-serif font-bold text-[#181E4B] text-lg">Course Feedback</h3>
+                <span className="text-[10px] font-mono text-[#DF6951] font-bold uppercase">{traineeProfile.feedbacks.length} submitted</span>
               </div>
             </div>
             <button
               onClick={() => setShowFeedbackModal(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-orange-700 bg-white hover:bg-orange-50 rounded-xl transition border border-orange-200 shadow-xs cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold text-[#181E4B] bg-white hover:bg-slate-50 rounded-xl transition border border-slate-200 shadow-2xs cursor-pointer"
             >
               <Plus size={13} /> Add
             </button>
