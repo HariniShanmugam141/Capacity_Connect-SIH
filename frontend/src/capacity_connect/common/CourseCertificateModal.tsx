@@ -78,10 +78,10 @@ export const CourseCertificateModal: React.FC<CourseCertificateModalProps> = ({
           <div
             id="certificate-print-area"
             ref={certificateRef}
-            className="relative w-full aspect-[1.414/1] bg-white rounded-xl shadow-xl overflow-hidden select-none print:shadow-none print:rounded-none print:w-full print:h-auto"
+            className="relative w-full aspect-[1024/733] bg-white rounded-xl shadow-xl overflow-hidden select-none print:shadow-none print:rounded-none print:w-full print:h-auto"
             style={{ minHeight: '380px' }}
           >
-            {/* The exact background template image */}
+            {/* Pristine blank background template image */}
             <img
               src="/certificate-template.png"
               alt="Capacity Connect Certificate Template"
@@ -89,34 +89,34 @@ export const CourseCertificateModal: React.FC<CourseCertificateModalProps> = ({
             />
 
             {/* DYNAMIC OVERLAY 1: STUDENT NAME */}
-            {/* Seamless white mask covering 'Name Surname' completely between the laurel wreaths */}
+            {/* Perfectly centered between 'THIS CERTIFICATE IS PROUDLY PRESENTED TO' and the gold line with diamond */}
             <div
-              className="absolute left-[16%] right-[16%] flex items-center justify-center bg-white pointer-events-none"
-              style={{ top: '44.8%', height: '9.6%' }}
+              className="absolute left-[15%] right-[15%] flex items-center justify-center pointer-events-none"
+              style={{ top: '47.5%', height: '9.5%' }}
             >
-              <span className="font-serif italic font-bold text-2xl sm:text-4xl md:text-5xl text-[#0b1b3d] tracking-normal whitespace-nowrap">
+              <span className="font-serif italic font-bold text-2xl sm:text-4xl md:text-5xl text-[#0b1b3d] tracking-normal whitespace-nowrap select-text">
                 {studentName}
               </span>
             </div>
 
             {/* DYNAMIC OVERLAY 2: COURSE NAME */}
-            {/* Perfectly synced printed text centered directly between the decorative gold line segments */}
+            {/* Perfectly aligned directly between the left & right horizontal line guides */}
             <div
-              className="absolute left-[16%] right-[16%] flex items-center justify-center bg-white pointer-events-none"
-              style={{ top: '61.6%', height: '5.8%' }}
+              className="absolute left-[18%] right-[18%] flex items-center justify-center pointer-events-none"
+              style={{ top: '64.5%', height: '7.5%' }}
             >
-              <span className="font-serif font-bold text-sm sm:text-lg md:text-xl text-[#0b1b3d] tracking-wide uppercase px-4 whitespace-nowrap text-center">
+              <span className="font-serif font-bold text-sm sm:text-base md:text-xl text-[#0b1b3d] tracking-wider uppercase px-4 whitespace-nowrap text-center select-text">
                 {courseTitle}
               </span>
             </div>
 
             {/* DYNAMIC OVERLAY 3: DATE */}
-            {/* Cleanly positioned date right above 'DATE' with no trailing semicolon */}
+            {/* Perfectly centered directly above the gold date line and 'DATE' */}
             <div
-              className="absolute flex items-center justify-center bg-white pointer-events-none"
-              style={{ left: '18%', top: '78.5%', width: '18%', height: '3.6%' }}
+              className="absolute flex items-center justify-center pointer-events-none text-center"
+              style={{ left: '19.3%', width: '19.4%', top: '80.0%', height: '5.8%' }}
             >
-              <span className="font-serif font-bold text-xs sm:text-sm md:text-base text-[#0b1b3d] tracking-wider whitespace-nowrap">
+              <span className="font-serif font-bold text-xs sm:text-sm md:text-base text-[#0b1b3d] tracking-wider whitespace-nowrap select-text">
                 {formattedDate}
               </span>
             </div>
