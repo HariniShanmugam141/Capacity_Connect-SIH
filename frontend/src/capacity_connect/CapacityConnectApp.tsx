@@ -2,6 +2,7 @@ import React from 'react';
 import { PlatformProvider, usePlatform } from './PlatformContext';
 import { Navbar } from './Navbar';
 import { TraineeProfile } from './trainee/TraineeProfile';
+import { TraineeCoursesHub } from './trainee/TraineeCoursesHub';
 import { IdeationPortfolio } from './trainee/IdeationPortfolio';
 import { TraineeLibrary } from './trainee/TraineeLibrary';
 import { TraineeAssessments } from './trainee/TraineeAssessments';
@@ -56,6 +57,7 @@ const MainContent: React.FC<{
   const renderActiveView = () => {
     // Trainee views
     if (activeNavTab === 'profile') return <TraineeProfile />;
+    if (activeNavTab === 'my_courses') return <TraineeCoursesHub />;
     if (activeNavTab === 'portfolio') return <IdeationPortfolio />;
     if (activeNavTab === 'assessments') return <TraineeAssessments />;
     if (activeNavTab === 'library') return <TraineeLibrary />;

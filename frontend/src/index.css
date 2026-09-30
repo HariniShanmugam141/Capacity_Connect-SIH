@@ -33,8 +33,16 @@ body {
 /* Headings: Elegant, high-class editorial Volkhov serif matching reference image */
 h1, h2, h3, h4, h5, h6, .font-serif, .font-heading {
   font-family: 'Volkhov', 'Playfair Display', Georgia, serif;
-  color: #181E4B;
   letter-spacing: -0.015em;
+}
+
+h1:not([class*="text-"]),
+h2:not([class*="text-"]),
+h3:not([class*="text-"]),
+h4:not([class*="text-"]),
+h5:not([class*="text-"]),
+h6:not([class*="text-"]) {
+  color: #181E4B;
 }
 
 /* Category Eyebrows (like 'BEST DESTINATIONS AROUND THE WORLD' in Jadoo) */

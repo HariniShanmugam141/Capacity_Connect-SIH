@@ -3,23 +3,38 @@ import { usePlatform } from '../PlatformContext';
 import {
   LayoutDashboard, UserCheck, BookOpen, GraduationCap, Award,
   Users, Layers, Clock, Mail, Star, School, CheckCircle2,
-  TrendingUp, BarChart3, Search, ChevronRight
+  TrendingUp, BarChart3, Search, ChevronRight, Camera
 } from 'lucide-react';
 
 export const AdminExecutiveDashboard: React.FC = () => {
   const {
     adminAnalytics,
+    adminProfile,
+    updateAdminProfile,
     allTrainers,
     allCourses,
     allStudents,
     traineeParticipation
   } = usePlatform();
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'staff' | 'courses' | 'students'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'trainers' | 'courses' | 'trainees'>('overview');
   const [search, setSearch] = useState('');
 
+  const handleAdminPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === 'string') {
+          updateAdminProfile({ avatar: reader.result });
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   // Filtered lists
-  const filteredStaff = allTrainers.filter(t =>
+  const filteredTrainers = allTrainers.filter(t =>
     t.name.toLowerCase().includes(search.toLowerCase()) ||
     t.domain.toLowerCase().includes(search.toLowerCase())
   );
@@ -30,7 +45,7 @@ export const AdminExecutiveDashboard: React.FC = () => {
     c.category.toLowerCase().includes(search.toLowerCase())
   );
 
-  const filteredStudents = allStudents.filter(s =>
+  const filteredTrainees = allStudents.filter(s =>
     s.fullName.toLowerCase().includes(search.toLowerCase()) ||
     s.cohort.toLowerCase().includes(search.toLowerCase())
   );
@@ -39,13 +54,28 @@ export const AdminExecutiveDashboard: React.FC = () => {
     <div className="space-y-6 pb-12">
       {/* Header: Simple, Clean, Intuitive */}
       <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-            <LayoutDashboard size={20} />
+        <div className="flex items-center gap-3.5">
+          {/* Admin Avatar Photo with Camera Upload Button */}
+          <div className="relative group w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-slate-200 shadow-xs bg-slate-100">
+            <img
+              src={adminProfile.avatar || '/default-avatar.png'}
+              alt={adminProfile.fullName}
+              onError={(e) => { e.currentTarget.src = '/default-avatar.png'; }}
+              className="w-full h-full object-cover"
+            />
+            <label className="absolute inset-0 bg-black/60 text-white flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer">
+              <Camera size={13} />
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleAdminPhotoUpload}
+              />
+            </label>
           </div>
           <div>
-            <h1 className="text-lg font-bold text-slate-900 tracking-tight">Admin Dashboard</h1>
-            <span className="text-xs text-slate-500">Live platform monitoring</span>
+            <h1 className="text-lg font-bold text-slate-900 tracking-tight">Admin Executive Dashboard</h1>
+            <span className="text-xs text-slate-500">Administrator: {adminProfile.fullName} • Platform Management</span>
           </div>
         </div>
 
@@ -64,15 +94,15 @@ export const AdminExecutiveDashboard: React.FC = () => {
           </button>
 
           <button
-            onClick={() => { setActiveTab('staff'); setSearch(''); }}
+            onClick={() => { setActiveTab('trainers'); setSearch(''); }}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg whitespace-nowrap transition cursor-pointer ${
-              activeTab === 'staff'
+              activeTab === 'trainers'
                 ? 'bg-blue-600 text-white shadow-xs font-semibold'
                 : 'text-slate-600 hover:text-blue-700 hover:bg-white/60'
             }`}
           >
             <UserCheck size={13} />
-            <span>Staff ({allTrainers.length})</span>
+            <span>Trainers ({allTrainers.length})</span>
           </button>
 
           <button
@@ -88,24 +118,24 @@ export const AdminExecutiveDashboard: React.FC = () => {
           </button>
 
           <button
-            onClick={() => { setActiveTab('students'); setSearch(''); }}
+            onClick={() => { setActiveTab('trainees'); setSearch(''); }}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg whitespace-nowrap transition cursor-pointer ${
-              activeTab === 'students'
+              activeTab === 'trainees'
                 ? 'bg-blue-600 text-white shadow-xs font-semibold'
                 : 'text-slate-600 hover:text-blue-700 hover:bg-white/60'
             }`}
           >
             <GraduationCap size={13} />
-            <span>Students ({allStudents.length})</span>
+            <span>Trainees ({allStudents.length})</span>
           </button>
         </div>
       </div>
 
       {/* 4 Clean Metric Cards with Prominent Icons & Soft Professional Colors */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Card 1: Staff */}
+        {/* Card 1: Trainers */}
         <div
-          onClick={() => { setActiveTab('staff'); setSearch(''); }}
+          onClick={() => { setActiveTab('trainers'); setSearch(''); }}
           className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] flex items-center gap-3.5 cursor-pointer hover:border-blue-300 transition group"
         >
           <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
@@ -113,7 +143,7 @@ export const AdminExecutiveDashboard: React.FC = () => {
           </div>
           <div>
             <div className="text-2xl font-mono font-black text-slate-900 leading-none">{allTrainers.length}</div>
-            <div className="text-xs text-slate-500 font-medium mt-1">Faculty Staff</div>
+            <div className="text-xs text-slate-500 font-medium mt-1">Trainers</div>
           </div>
         </div>
 
@@ -131,9 +161,9 @@ export const AdminExecutiveDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Card 3: Students */}
+        {/* Card 3: Trainees */}
         <div
-          onClick={() => { setActiveTab('students'); setSearch(''); }}
+          onClick={() => { setActiveTab('trainees'); setSearch(''); }}
           className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] flex items-center gap-3.5 cursor-pointer hover:border-emerald-300 transition group"
         >
           <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
@@ -141,7 +171,7 @@ export const AdminExecutiveDashboard: React.FC = () => {
           </div>
           <div>
             <div className="text-2xl font-mono font-black text-slate-900 leading-none">{allStudents.length}</div>
-            <div className="text-xs text-slate-500 font-medium mt-1">Enrolled Students</div>
+            <div className="text-xs text-slate-500 font-medium mt-1">Enrolled Trainees</div>
           </div>
         </div>
 
@@ -160,7 +190,7 @@ export const AdminExecutiveDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Search Bar for Staff / Courses / Students */}
+      {/* Search Bar for Trainers / Courses / Trainees */}
       {activeTab !== 'overview' && (
         <div className="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
           <div className="relative w-full sm:w-80">
@@ -168,11 +198,11 @@ export const AdminExecutiveDashboard: React.FC = () => {
             <input
               type="text"
               placeholder={
-                activeTab === 'staff'
-                  ? 'Search staff...'
+                activeTab === 'trainers'
+                  ? 'Search trainers...'
                   : activeTab === 'courses'
                   ? 'Search courses...'
-                  : 'Search students...'
+                  : 'Search trainees...'
               }
               value={search}
               onChange={e => setSearch(e.target.value)}
@@ -294,10 +324,10 @@ export const AdminExecutiveDashboard: React.FC = () => {
         </div>
       )}
 
-      {/* TAB 2: WATCH ALL STAFF */}
-      {activeTab === 'staff' && (
+      {/* TAB 2: WATCH ALL TRAINERS */}
+      {activeTab === 'trainers' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filteredStaff.map(trainer => {
+          {filteredTrainers.map(trainer => {
             const course = allCourses.find(c => c.trainerId === trainer.id || c.trainerName === trainer.name);
             return (
               <div
@@ -337,7 +367,7 @@ export const AdminExecutiveDashboard: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-1 shrink-0 text-slate-400 text-[11px]">
                     <Users size={12} />
-                    <span>{trainer.studentsTaught} taught</span>
+                    <span>{trainer.studentsTaught} trainees trained</span>
                   </div>
                 </div>
               </div>
@@ -373,7 +403,7 @@ export const AdminExecutiveDashboard: React.FC = () => {
                     alt={course.trainerName}
                     className="w-6 h-6 rounded-lg object-cover ring-1 ring-slate-200"
                   />
-                  <span>Staff: <strong className="text-slate-800">{course.trainerName}</strong></span>
+                  <span>Trainer: <strong className="text-slate-800">{course.trainerName}</strong></span>
                 </div>
 
                 <div className="flex items-center gap-3 text-slate-500">
@@ -381,7 +411,7 @@ export const AdminExecutiveDashboard: React.FC = () => {
                     <Layers size={12} className="text-indigo-600" /> {course.totalModules} modules
                   </span>
                   <span className="flex items-center gap-1">
-                    <GraduationCap size={13} className="text-emerald-600" /> {course.enrolledStudentsCount}
+                    <GraduationCap size={13} className="text-emerald-600" /> {course.enrolledStudentsCount} trainees
                   </span>
                 </div>
               </div>
@@ -390,42 +420,42 @@ export const AdminExecutiveDashboard: React.FC = () => {
         </div>
       )}
 
-      {/* TAB 4: WATCH ALL STUDENTS */}
-      {activeTab === 'students' && (
+      {/* TAB 4: WATCH ALL TRAINEES */}
+      {activeTab === 'trainees' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filteredStudents.map(student => (
+          {filteredTrainees.map(trainee => (
             <div
-              key={student.id}
+              key={trainee.id}
               className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] hover:border-emerald-200 transition space-y-3"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3 min-w-0">
                   <img
-                    src={student.avatar}
-                    alt={student.fullName}
+                    src={trainee.avatar}
+                    alt={trainee.fullName}
                     className="w-10 h-10 rounded-xl object-cover ring-1 ring-slate-200 shrink-0"
                   />
                   <div className="min-w-0">
-                    <h4 className="font-bold text-sm text-slate-900 truncate">{student.fullName}</h4>
-                    <span className="text-slate-400 text-xs truncate block">{student.cohort}</span>
+                    <h4 className="font-bold text-sm text-slate-900 truncate">{trainee.fullName}</h4>
+                    <span className="text-slate-400 text-xs truncate block">{trainee.cohort}</span>
                   </div>
                 </div>
 
                 <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md text-[11px] font-semibold border border-emerald-100 shrink-0">
-                  {student.status}
+                  {trainee.status}
                 </span>
               </div>
 
               <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
                 <div className="flex items-center gap-1 text-[11px] truncate">
                   <BookOpen size={12} className="text-blue-600 shrink-0" />
-                  <span className="truncate">{student.enrolledCourseNames[0] || 'Enrolled'}</span>
+                  <span className="truncate">{trainee.enrolledCourseNames[0] || 'Enrolled'}</span>
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="font-bold text-slate-900">{student.averageScore}% avg</span>
+                  <span className="font-bold text-slate-900">{trainee.averageScore}% avg</span>
                   <span>•</span>
-                  <span>{student.quizzesCompleted} quizzes</span>
+                  <span>{trainee.quizzesCompleted} quizzes</span>
                 </div>
               </div>
             </div>

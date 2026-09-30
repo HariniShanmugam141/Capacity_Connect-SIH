@@ -71,7 +71,7 @@ export default function ProgressPage({
         {/* TOP HEADER */}
         <header className="flex justify-between items-center px-8 py-5 sticky top-0 bg-[#F8F9FB]/95 backdrop-blur-sm z-40 border-b border-transparent">
           <div className="flex-1">
-            <h2 className="text-2xl font-bold text-gray-900 mb-1">Student Progress</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-1">Trainee Progress</h2>
             <p className="text-sm text-gray-500 font-medium">Track your learning progress and stay consistent on your career journey.</p>
           </div>
           

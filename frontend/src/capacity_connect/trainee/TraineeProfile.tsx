@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { usePlatform } from '../PlatformContext';
 import { repoToPortfolioItem } from '../githubService';
+
 import {
   GraduationCap, Briefcase, FileText, Sparkles, Award, BookOpen,
   CheckCircle2, MessageSquare, Plus, Trash2, Edit3, Upload,
@@ -8,6 +9,7 @@ import {
   AlertCircle, ShieldCheck, Camera, GitFork, RefreshCw,
   Check, FolderGit2
 } from 'lucide-react';
+import { CourseCertificateModal } from '../common/CourseCertificateModal';
 
 const GithubIcon: React.FC<{ size?: number; className?: string }> = ({ size = 20, className = '' }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}>
@@ -44,7 +46,8 @@ export const TraineeProfile: React.FC = () => {
     addFeedback,
     addPortfolioItem,
     syncGitHubProfile,
-    isSyncingGitHub
+    isSyncingGitHub,
+    setActiveNavTab
   } = usePlatform();
 
   // GitHub integration state
@@ -118,6 +121,13 @@ export const TraineeProfile: React.FC = () => {
   const [certIssuer, setCertIssuer] = useState('');
   const [certDate, setCertDate] = useState('');
   const [certCredId, setCertCredId] = useState('');
+  const [certModalData, setCertModalData] = useState<{
+    studentName: string;
+    courseTitle: string;
+    date?: string;
+    trainerName?: string;
+    credentialId?: string;
+  } | null>(null);
 
   // Feedback form
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
@@ -249,22 +259,17 @@ export const TraineeProfile: React.FC = () => {
     <div className="space-y-8 pb-16">
       {/* Profile Header Card - Jadoo Aesthetic with Floating Snapshot */}
       <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-jadoo border border-slate-200/90 relative overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#DF6951] via-[#F1A501] to-[#181E4B]" />
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500" />
         
         <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-8">
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 flex-1">
             <div className="relative group shrink-0">
-              {traineeProfile.avatar ? (
-                <img
-                  src={traineeProfile.avatar}
-                  alt={traineeProfile.fullName}
-                  className="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl object-cover ring-4 ring-amber-100 shadow-md"
-                />
-              ) : (
-                <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl bg-gradient-to-br from-[#181E4B] to-[#2B356E] text-white flex items-center justify-center text-3xl font-serif font-black shadow-md ring-4 ring-amber-100">
-                  {initials}
-                </div>
-              )}
+              <img
+                src={traineeProfile.avatar || '/default-avatar.png'}
+                alt={traineeProfile.fullName}
+                onError={(e) => { e.currentTarget.src = '/default-avatar.png'; }}
+                className="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl object-cover ring-4 ring-blue-100 shadow-md bg-slate-100"
+              />
 
               {/* Photo Upload Overlay */}
               <label
@@ -281,7 +286,7 @@ export const TraineeProfile: React.FC = () => {
                 />
               </label>
 
-              <span className="absolute -bottom-1 -right-1 px-3 py-1 bg-[#DF6951] text-white text-[11px] font-bold rounded-full border-2 border-white flex items-center gap-1 shadow-sm">
+              <span className="absolute -bottom-1 -right-1 px-3 py-1 bg-blue-600 text-white text-[11px] font-bold rounded-full border-2 border-white flex items-center gap-1 shadow-sm">
                 <CheckCircle2 size={12} /> Trainee
               </span>
             </div>
@@ -295,13 +300,13 @@ export const TraineeProfile: React.FC = () => {
                 <h1 className="text-3xl sm:text-4xl font-serif font-bold text-[#181E4B] tracking-tight">
                   <span className="aesthetic-underline">{traineeProfile.fullName}</span>
                 </h1>
-                <span className="bg-amber-50 text-[#DF6951] text-xs font-semibold px-3 py-1 rounded-full border border-amber-200">
+                <span className="bg-blue-50 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full border border-blue-200">
                   Ready to Deploy
                 </span>
               </div>
               
               <p className="text-[#5E6282] font-medium text-base">
-                {traineeProfile.title || 'Student / Trainee'}
+                {traineeProfile.title || 'Trainee'}
               </p>
 
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 text-xs text-[#5E6282] pt-1">
@@ -338,16 +343,16 @@ export const TraineeProfile: React.FC = () => {
             </div>
           </div>
 
-          {/* Right: Floating Jadoo-style Candidate Snapshot Card */}
-          <div className="w-full lg:w-80 bg-gradient-to-b from-[#FFFDF9] to-[#FBF8F2] rounded-2xl p-5 border border-amber-200/70 shadow-md flex flex-col justify-between gap-4 shrink-0">
+          {/* Right: Floating Candidate Snapshot Card */}
+          <div className="w-full lg:w-80 bg-gradient-to-b from-[#FFFDF9] to-[#F8FAFC] rounded-2xl p-5 border border-blue-200/70 shadow-md flex flex-col justify-between gap-4 shrink-0">
             <div>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#DF6951]">Candidate Readiness</span>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-blue-700">Candidate Readiness</span>
                 <span className="text-xs font-bold text-[#181E4B]">{profileScore}% Complete</span>
               </div>
-              <div className="w-full h-2 bg-amber-100/70 rounded-full overflow-hidden">
+              <div className="w-full h-2 bg-blue-100/70 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-[#DF6951] to-[#F1A501] rounded-full transition-all duration-500"
+                  className="h-full bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full transition-all duration-500"
                   style={{ width: `${profileScore}%` }}
                 />
               </div>
@@ -370,7 +375,7 @@ export const TraineeProfile: React.FC = () => {
 
             <button
               onClick={() => setShowEditBio(!showEditBio)}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-bold text-white bg-gradient-to-r from-[#DF6951] to-[#F1A501] hover:brightness-105 rounded-xl shadow-md shadow-orange-500/20 transition cursor-pointer"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-md shadow-blue-500/20 transition cursor-pointer"
             >
               <Edit3 size={14} />
               {showEditBio ? 'Close Editor' : 'Edit Profile & Bio'}
@@ -681,7 +686,7 @@ export const TraineeProfile: React.FC = () => {
                     setNewInterest('');
                   }
                 }}
-                className="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-semibold shadow-xs cursor-pointer"
+                className="px-2.5 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-xs cursor-pointer transition"
               >
                 Add
               </button>
@@ -743,7 +748,7 @@ export const TraineeProfile: React.FC = () => {
             <button
               type="submit"
               disabled={isSyncingGitHub || !githubInput.trim()}
-              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#DF6951] to-[#F1A501] hover:brightness-105 disabled:opacity-50 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md transition cursor-pointer"
+              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md shadow-blue-500/25 transition cursor-pointer"
             >
               <RefreshCw size={14} className={isSyncingGitHub ? 'animate-spin' : ''} />
               <span>{isSyncingGitHub ? 'Syncing...' : 'Sync Projects'}</span>
@@ -1012,7 +1017,7 @@ export const TraineeProfile: React.FC = () => {
 
           <div className="space-y-3">
             {traineeProfile.certificates.map(cert => (
-              <div key={cert.id} className="p-4 rounded-2xl border border-rose-100 bg-white shadow-2xs hover:shadow-sm transition flex items-center justify-between">
+              <div key={cert.id} className="p-4 rounded-2xl border border-rose-100 bg-white shadow-2xs hover:shadow-sm transition flex items-center justify-between gap-3">
                 <div className="space-y-0.5">
                   <div className="flex items-center gap-2">
                     <h4 className="font-serif font-bold text-sm text-[#181E4B]">{cert.title}</h4>
@@ -1024,6 +1029,17 @@ export const TraineeProfile: React.FC = () => {
                     {cert.issuer} • <span className="font-mono">{cert.issueDate}</span>
                   </p>
                 </div>
+                <button
+                  onClick={() => setCertModalData({
+                    studentName: traineeProfile.fullName,
+                    courseTitle: cert.title,
+                    date: cert.issueDate,
+                    credentialId: cert.credentialId
+                  })}
+                  className="px-3 py-1.5 text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-xl transition border border-blue-200 flex items-center gap-1.5 cursor-pointer shrink-0"
+                >
+                  <Award size={13} /> View Certificate
+                </button>
               </div>
             ))}
             {traineeProfile.certificates.length === 0 && (
@@ -1047,34 +1063,62 @@ export const TraineeProfile: React.FC = () => {
                 <span className="text-[10px] font-mono text-cyan-600 font-bold uppercase">{traineeProfile.enrolledCourses.length} active</span>
               </div>
             </div>
-            <span className="text-xs font-mono font-bold text-cyan-700 bg-cyan-100/70 px-2.5 py-0.5 rounded-full border border-cyan-200 shadow-2xs">
-              Enrolled
-            </span>
+            <button
+              onClick={() => setActiveNavTab('my_courses')}
+              className="px-3.5 py-1.5 text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-xl transition border border-blue-200 shadow-2xs flex items-center gap-1.5 cursor-pointer"
+            >
+              <BookOpen size={13} />
+              <span>Open My Courses</span>
+            </button>
           </div>
 
           <div className="space-y-3">
-            {traineeProfile.enrolledCourses.map(course => (
-              <div key={course.id} className="p-4 rounded-2xl border border-cyan-100 bg-white shadow-2xs hover:shadow-sm transition space-y-2">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h4 className="font-serif font-bold text-sm text-[#181E4B]">{course.title}</h4>
-                    <p className="text-xs text-[#5E6282] mt-0.5">
-                      {course.trainerName} • {course.category}
-                    </p>
+            {traineeProfile.enrolledCourses.map(course => {
+              const isApproved = course.certificateApproved || course.progress >= 100;
+              return (
+                <div key={course.id} className="p-4 rounded-2xl border border-cyan-100 bg-white shadow-2xs hover:shadow-sm transition space-y-2.5">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h4 className="font-serif font-bold text-sm text-[#181E4B]">{course.title}</h4>
+                      <p className="text-xs text-[#5E6282] mt-0.5">
+                        {course.trainerName} • {course.category}
+                      </p>
+                    </div>
+                    <span className="text-xs font-mono font-bold text-slate-700">{course.progress}%</span>
                   </div>
-                  <span className="text-xs font-mono font-bold text-slate-700">{course.progress}%</span>
-                </div>
 
-                <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                  <div
-                    className="bg-gradient-to-r from-cyan-500 to-blue-600 h-1.5 rounded-full transition-all duration-500"
-                    style={{ width: `${course.progress}%` }}
-                  />
+                  <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                    <div
+                      className="bg-gradient-to-r from-cyan-500 to-blue-600 h-1.5 rounded-full transition-all duration-500"
+                      style={{ width: `${course.progress}%` }}
+                    />
+                  </div>
+
+                  {isApproved && (
+                    <div className="flex items-center justify-between pt-2 border-t border-cyan-50">
+                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                        <CheckCircle2 size={12} className="text-emerald-600" />
+                        <span>Certificate Approved by Trainer</span>
+                      </span>
+                      <button
+                        onClick={() => setCertModalData({
+                          studentName: traineeProfile.fullName,
+                          courseTitle: course.title,
+                          date: course.certificateApprovedDate || new Date().toLocaleDateString('en-GB').replace(/\//g, '.'),
+                          trainerName: course.trainerName
+                        })}
+                        className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                      >
+                        <Award size={13} />
+                        <span>View Certificate</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
             {traineeProfile.enrolledCourses.length === 0 && (
-              <p className="text-xs text-[#5E6282] italic py-6 text-center">No enrolled courses yet. Check Courses & Faculty.</p>
+              <p className="text-xs text-[#5E6282] italic py-6 text-center">No enrolled courses yet. Check Courses & Trainers.</p>
             )}
           </div>
         </div>
@@ -1325,7 +1369,7 @@ export const TraineeProfile: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-bold"
+                  className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold transition shadow-xs cursor-pointer"
                 >
                   Save Experience
                 </button>
@@ -1463,7 +1507,7 @@ export const TraineeProfile: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-bold"
+                  className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold"
                 >
                   Submit Feedback
                 </button>
@@ -1471,6 +1515,19 @@ export const TraineeProfile: React.FC = () => {
             </form>
           </div>
         </div>
+      )}
+
+      {/* Official Course Completion Certificate Modal */}
+      {certModalData && (
+        <CourseCertificateModal
+          isOpen={!!certModalData}
+          onClose={() => setCertModalData(null)}
+          studentName={certModalData.studentName}
+          courseTitle={certModalData.courseTitle}
+          issueDate={certModalData.date}
+          trainerName={certModalData.trainerName}
+          credentialId={certModalData.credentialId}
+        />
       )}
     </div>
   );

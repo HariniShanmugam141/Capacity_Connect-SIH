@@ -4,7 +4,7 @@ import {
   Bell, User, UserCheck, Shield, ChevronDown,
   Megaphone, LogOut, CheckCircle, ExternalLink, Bookmark,
   Layers, FolderGit2, FileText, Video, Award, Compass, X,
-  Building, ShieldCheck
+  Building, ShieldCheck, Camera, BookOpen
 } from 'lucide-react';
 
 export const Navbar: React.FC<{ onLogout?: () => void }> = ({ onLogout }) => {
@@ -15,11 +15,34 @@ export const Navbar: React.FC<{ onLogout?: () => void }> = ({ onLogout }) => {
     setActiveNavTab,
     announcements,
     traineeProfile,
-    trainerProfile
+    trainerProfile,
+    adminProfile,
+    updateTraineeProfile,
+    updateTrainerProfile,
+    updateAdminProfile
   } = usePlatform();
 
   const [showNotifications, setShowNotifications] = useState(false);
   const [bannerDismissed, setBannerDismissed] = useState(false);
+
+  const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === 'string') {
+          if (currentRole === 'TRAINEE') {
+            updateTraineeProfile({ avatar: reader.result });
+          } else if (currentRole === 'TRAINER') {
+            updateTrainerProfile({ avatar: reader.result });
+          } else {
+            updateAdminProfile({ avatar: reader.result });
+          }
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   // Active announcement for top ticker banner
   const activeBanner = announcements.find(a => a.active && a.urgency !== 'Normal');
@@ -54,7 +77,7 @@ export const Navbar: React.FC<{ onLogout?: () => void }> = ({ onLogout }) => {
               alt="CapacityConnect Logo"
               className="h-12 sm:h-14 w-auto object-contain max-w-[210px]"
             />
-            <span className="hidden sm:inline-block px-3 py-1 bg-amber-50 text-[#DF6951] text-xs font-semibold rounded-full border border-amber-200 uppercase tracking-wider">
+            <span className="hidden sm:inline-block px-3 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full border border-blue-200 uppercase tracking-wider">
               Enterprise
             </span>
           </div>
@@ -62,15 +85,15 @@ export const Navbar: React.FC<{ onLogout?: () => void }> = ({ onLogout }) => {
           {/* Locked-In Current Role Badge */}
           <div className="flex items-center gap-2 font-sans">
             {currentRole === 'TRAINEE' && (
-              <span className="flex items-center gap-1.5 px-3.5 py-1.5 bg-amber-50 text-[#DF6951] rounded-full text-xs sm:text-sm font-semibold border border-amber-200 shadow-2xs">
+              <span className="flex items-center gap-1.5 px-3.5 py-1.5 bg-blue-50 text-blue-700 rounded-full text-xs sm:text-sm font-semibold border border-blue-200 shadow-2xs">
                 <User size={15} />
-                <span>Student / Trainee</span>
+                <span>Trainee</span>
               </span>
             )}
             {currentRole === 'TRAINER' && (
               <span className="flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-50 text-emerald-800 rounded-full text-xs sm:text-sm font-semibold border border-emerald-200 shadow-2xs">
                 <UserCheck size={15} />
-                <span>Staff / Trainer</span>
+                <span>Trainer</span>
               </span>
             )}
             {currentRole === 'ADMIN' && (
@@ -132,23 +155,33 @@ export const Navbar: React.FC<{ onLogout?: () => void }> = ({ onLogout }) => {
                   ? traineeProfile.fullName
                   : currentRole === 'TRAINER'
                   ? trainerProfile.fullName
-                  : 'Administrator';
+                  : adminProfile.fullName;
                 const currentAvatar = currentRole === 'TRAINEE'
                   ? traineeProfile.avatar
                   : currentRole === 'TRAINER'
                   ? trainerProfile.avatar
-                  : '';
-                const initials = currentName ? currentName.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase() : 'U';
+                  : adminProfile.avatar;
 
-                return currentAvatar ? (
-                  <img
-                    src={currentAvatar}
-                    alt="Active Profile"
-                    className="w-8 h-8 rounded-lg object-cover ring-1 ring-slate-200"
-                  />
-                ) : (
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 text-white font-bold text-xs flex items-center justify-center shadow-xs">
-                    {initials}
+                return (
+                  <div className="relative group w-8 h-8 rounded-lg overflow-hidden shrink-0 border border-slate-200 shadow-2xs bg-slate-100">
+                    <img
+                      src={currentAvatar || '/default-avatar.png'}
+                      alt={currentName}
+                      onError={(e) => { e.currentTarget.src = '/default-avatar.png'; }}
+                      className="w-full h-full object-cover"
+                    />
+                    <label
+                      className="absolute inset-0 bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer"
+                      title="Upload new profile photo"
+                    >
+                      <Camera size={12} />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleAvatarUpload}
+                      />
+                    </label>
                   </div>
                 );
               })()}
@@ -161,7 +194,7 @@ export const Navbar: React.FC<{ onLogout?: () => void }> = ({ onLogout }) => {
                     : 'Administrator'}
                 </span>
                 <span className="text-[10px] text-slate-500 block">
-                  {currentRole === 'TRAINEE' ? 'Candidate' : currentRole === 'TRAINER' ? 'Faculty' : 'Operations'}
+                  {currentRole === 'TRAINEE' ? 'Trainee' : currentRole === 'TRAINER' ? 'Trainer' : 'Admin'}
                 </span>
               </div>
 
@@ -188,17 +221,27 @@ export const Navbar: React.FC<{ onLogout?: () => void }> = ({ onLogout }) => {
                 className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer text-xs sm:text-sm ${
                   activeNavTab === 'profile'
                     ? 'bg-[#181E4B] text-white shadow-md shadow-[#181E4B]/20 font-bold'
-                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-amber-50/70 font-medium'
+                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-blue-50/70 font-medium'
                 }`}
               >
                 <User size={15} /> Profile
+              </button>
+              <button
+                onClick={() => setActiveNavTab('my_courses')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer text-xs sm:text-sm ${
+                  activeNavTab === 'my_courses'
+                    ? 'bg-[#181E4B] text-white shadow-md shadow-[#181E4B]/20 font-bold'
+                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-blue-50/70 font-medium'
+                }`}
+              >
+                <BookOpen size={15} /> My Courses
               </button>
               <button
                 onClick={() => setActiveNavTab('portfolio')}
                 className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer text-xs sm:text-sm ${
                   activeNavTab === 'portfolio'
                     ? 'bg-[#181E4B] text-white shadow-md shadow-[#181E4B]/20 font-bold'
-                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-amber-50/70 font-medium'
+                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-blue-50/70 font-medium'
                 }`}
               >
                 <FolderGit2 size={15} /> Portfolio & Wishlist
@@ -208,7 +251,7 @@ export const Navbar: React.FC<{ onLogout?: () => void }> = ({ onLogout }) => {
                 className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer text-xs sm:text-sm ${
                   activeNavTab === 'assessments'
                     ? 'bg-[#181E4B] text-white shadow-md shadow-[#181E4B]/20 font-bold'
-                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-amber-50/70 font-medium'
+                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-blue-50/70 font-medium'
                 }`}
               >
                 <Award size={15} /> Assessments
@@ -218,10 +261,10 @@ export const Navbar: React.FC<{ onLogout?: () => void }> = ({ onLogout }) => {
                 className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer text-xs sm:text-sm ${
                   activeNavTab === 'library'
                     ? 'bg-[#181E4B] text-white shadow-md shadow-[#181E4B]/20 font-bold'
-                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-amber-50/70 font-medium'
+                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-blue-50/70 font-medium'
                 }`}
               >
-                <Video size={15} /> Courses & Faculty
+                <Video size={15} /> Courses & Trainers
               </button>
             </>
           )}
@@ -233,7 +276,7 @@ export const Navbar: React.FC<{ onLogout?: () => void }> = ({ onLogout }) => {
                 className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer text-xs sm:text-sm ${
                   activeNavTab === 'admin_dashboard'
                     ? 'bg-[#181E4B] text-white shadow-md shadow-[#181E4B]/20 font-bold'
-                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-amber-50/70 font-medium'
+                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-blue-50/70 font-medium'
                 }`}
               >
                 <Layers size={15} /> Overview
@@ -243,7 +286,7 @@ export const Navbar: React.FC<{ onLogout?: () => void }> = ({ onLogout }) => {
                 className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer text-xs sm:text-sm ${
                   activeNavTab === 'admin_user_approval'
                     ? 'bg-[#181E4B] text-white shadow-md shadow-[#181E4B]/20 font-bold'
-                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-amber-50/70 font-medium'
+                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-blue-50/70 font-medium'
                 }`}
               >
                 <UserCheck size={15} /> User Approvals
@@ -253,7 +296,7 @@ export const Navbar: React.FC<{ onLogout?: () => void }> = ({ onLogout }) => {
                 className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer text-xs sm:text-sm ${
                   activeNavTab === 'admin_role_management'
                     ? 'bg-[#181E4B] text-white shadow-md shadow-[#181E4B]/20 font-bold'
-                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-amber-50/70 font-medium'
+                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-blue-50/70 font-medium'
                 }`}
               >
                 <Shield size={15} /> Roles Directory
@@ -263,7 +306,7 @@ export const Navbar: React.FC<{ onLogout?: () => void }> = ({ onLogout }) => {
                 className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer text-xs sm:text-sm ${
                   activeNavTab === 'admin_competency_mapping'
                     ? 'bg-[#181E4B] text-white shadow-md shadow-[#181E4B]/20 font-bold'
-                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-amber-50/70 font-medium'
+                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-blue-50/70 font-medium'
                 }`}
               >
                 <Compass size={15} /> Competency Mapping
@@ -273,7 +316,7 @@ export const Navbar: React.FC<{ onLogout?: () => void }> = ({ onLogout }) => {
                 className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer text-xs sm:text-sm ${
                   activeNavTab === 'admin_homepage_publisher'
                     ? 'bg-[#181E4B] text-white shadow-md shadow-[#181E4B]/20 font-bold'
-                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-amber-50/70 font-medium'
+                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-blue-50/70 font-medium'
                 }`}
               >
                 <Megaphone size={15} /> Announcements
@@ -288,7 +331,7 @@ export const Navbar: React.FC<{ onLogout?: () => void }> = ({ onLogout }) => {
                 className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer text-xs sm:text-sm ${
                   activeNavTab === 'trainer_profile'
                     ? 'bg-[#181E4B] text-white shadow-md shadow-[#181E4B]/20 font-bold'
-                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-amber-50/70 font-medium'
+                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-blue-50/70 font-medium'
                 }`}
               >
                 <UserCheck size={15} /> Profile
@@ -298,7 +341,7 @@ export const Navbar: React.FC<{ onLogout?: () => void }> = ({ onLogout }) => {
                 className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer text-xs sm:text-sm ${
                   activeNavTab === 'trainer_questionnaires'
                     ? 'bg-[#181E4B] text-white shadow-md shadow-[#181E4B]/20 font-bold'
-                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-amber-50/70 font-medium'
+                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-blue-50/70 font-medium'
                 }`}
               >
                 <FileText size={15} /> Questionnaires
@@ -308,17 +351,17 @@ export const Navbar: React.FC<{ onLogout?: () => void }> = ({ onLogout }) => {
                 className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer text-xs sm:text-sm ${
                   activeNavTab === 'trainer_monitor'
                     ? 'bg-[#181E4B] text-white shadow-md shadow-[#181E4B]/20 font-bold'
-                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-amber-50/70 font-medium'
+                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-blue-50/70 font-medium'
                 }`}
               >
-                <Award size={15} /> My Students & Courses
+                <Award size={15} /> Trainees & Courses
               </button>
               <button
                 onClick={() => setActiveNavTab('trainer_library_manage')}
                 className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition cursor-pointer text-xs sm:text-sm ${
                   activeNavTab === 'trainer_library_manage'
                     ? 'bg-[#181E4B] text-white shadow-md shadow-[#181E4B]/20 font-bold'
-                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-amber-50/70 font-medium'
+                    : 'text-[#5E6282] hover:text-[#181E4B] hover:bg-blue-50/70 font-medium'
                 }`}
               >
                 <Video size={15} /> Course Materials

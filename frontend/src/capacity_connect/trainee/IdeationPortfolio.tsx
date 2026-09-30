@@ -7,6 +7,8 @@ import {
   TrendingUp, Layers, Check
 } from 'lucide-react';
 import { BrowseableTrainer } from '../store';
+import { DreamCompanyTracker } from './DreamCompanyTracker';
+import { Target } from 'lucide-react';
 
 const GithubIcon: React.FC<{ size?: number; className?: string }> = ({ size = 20, className = '' }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}>
@@ -25,7 +27,11 @@ export const IdeationPortfolio: React.FC = () => {
     likePortfolioItem,
     allTrainers,
     addTrainerToWishlist,
-    removeTrainerFromWishlist
+    removeTrainerFromWishlist,
+    allCourses,
+    enrollInCourse,
+    setDreamCompany,
+    setDreamCompanies
   } = usePlatform();
 
   const [activeTab, setActiveTab] = useState<'portfolio' | 'trainer_wishlist'>('portfolio');
@@ -116,12 +122,12 @@ export const IdeationPortfolio: React.FC = () => {
       {/* Clean Minimal Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white p-4 sm:p-5 rounded-xl border border-slate-200/80 shadow-xs">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
+          <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
             <Lightbulb size={20} />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-slate-900 tracking-tight">Ideation Space</h1>
-            <p className="text-xs text-slate-500">Showcase your portfolio and trainer wishlist</p>
+            <h1 className="text-lg font-bold text-slate-900 tracking-tight">Portfolio & Wishlist Hub</h1>
+            <p className="text-xs text-slate-500">Track your target dream company, showcase projects, and manage trainer wishlists</p>
           </div>
         </div>
 
@@ -129,9 +135,9 @@ export const IdeationPortfolio: React.FC = () => {
         <div className="flex items-center bg-slate-100 p-1 rounded-xl">
           <button
             onClick={() => setActiveTab('portfolio')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
               activeTab === 'portfolio'
-                ? 'bg-white text-slate-900 shadow-xs'
+                ? 'bg-white text-slate-900 shadow-xs font-bold'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -140,17 +146,28 @@ export const IdeationPortfolio: React.FC = () => {
           </button>
           <button
             onClick={() => setActiveTab('trainer_wishlist')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
               activeTab === 'trainer_wishlist'
-                ? 'bg-white text-slate-900 shadow-xs'
+                ? 'bg-white text-slate-900 shadow-xs font-bold'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             <Bookmark size={14} className={activeTab === 'trainer_wishlist' ? 'text-amber-600' : ''} />
-            Wishlist ({traineeProfile.wishlistTrainers.length})
+            Trainer Wishlist ({traineeProfile.wishlistTrainers.length})
           </button>
         </div>
       </div>
+
+      {/* DREAM COMPANY TARGET & DSA PREPARATION HUB */}
+      <DreamCompanyTracker
+        currentDreamCompany={traineeProfile.dreamCompany}
+        currentDreamCompanies={traineeProfile.dreamCompanies}
+        onSelectCompany={setDreamCompany}
+        onSelectCompanies={setDreamCompanies}
+        allCourses={allCourses}
+        enrolledCourseIds={traineeProfile.enrolledCourses.map(c => c.id)}
+        onEnrollCourse={enrollInCourse}
+      />
 
       {/* --- TAB 1: IDEATION -> PORTFOLIO --- */}
       {activeTab === 'portfolio' && (
@@ -162,7 +179,7 @@ export const IdeationPortfolio: React.FC = () => {
             </div>
             <button
               onClick={() => setShowAddModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-sm transition"
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-sm transition cursor-pointer"
             >
               <Plus size={16} /> Create New Ideation Project
             </button>
@@ -349,7 +366,7 @@ export const IdeationPortfolio: React.FC = () => {
                       </span>
                       <button
                         onClick={() => showToast(`1-on-1 mentorship session requested with ${item.trainerName}!`)}
-                        className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition shadow-xs"
+                        className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition shadow-xs cursor-pointer"
                       >
                         Request Mentorship
                       </button>
@@ -590,7 +607,7 @@ export const IdeationPortfolio: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold"
+                  className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold cursor-pointer transition shadow-sm"
                 >
                   Publish to Portfolio
                 </button>
@@ -636,7 +653,7 @@ export const IdeationPortfolio: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold"
+                  className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition shadow-xs cursor-pointer"
                 >
                   Confirm Wishlist
                 </button>

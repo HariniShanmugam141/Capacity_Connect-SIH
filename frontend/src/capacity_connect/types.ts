@@ -51,6 +51,17 @@ export interface CertificateItem {
   badgeUrl?: string;
 }
 
+export interface CourseRoadmapStep {
+  id: string;
+  stepNumber: number;
+  phase: string;
+  title: string;
+  description: string;
+  status: 'Completed' | 'In Progress' | 'Upcoming';
+  keyTopics: string[];
+  estimatedHours: number;
+}
+
 export interface EnrolledCourse {
   id: string;
   title: string;
@@ -63,6 +74,10 @@ export interface EnrolledCourse {
   lastActive: string;
   thumbnail: string;
   rating?: number;
+  roadmap?: CourseRoadmapStep[];
+  certificateApproved?: boolean;
+  certificateApprovedDate?: string;
+  certificateApprovedBy?: string;
 }
 
 export interface MCQAttempt {
@@ -159,6 +174,8 @@ export interface TraineeProfile {
   feedbacks: CourseFeedback[];
   portfolio: PortfolioItem[];
   wishlistTrainers: TrainerWishlistItem[];
+  dreamCompany?: string;
+  dreamCompanies?: string[];
 }
 
 // --- TRAINER TYPES ---
@@ -225,7 +242,7 @@ export interface TraineeParticipationRecord {
 export interface TrainerLibraryItem {
   id: string;
   title: string;
-  type: 'Lecture' | 'Presentation' | 'Study Material';
+  type: 'Lecture' | 'Presentation' | 'Study Material' | 'Assignment';
   subject: string;
   trainerId: string;
   trainerName: string;
@@ -235,6 +252,10 @@ export interface TrainerLibraryItem {
   resourceLink: string;
   downloadsCount: number;
   tags: string[];
+  courseId?: string;
+  courseTitle?: string;
+  youtubeUrl?: string;
+  dueDate?: string;
 }
 
 // --- ADMIN TYPES ---
@@ -337,5 +358,11 @@ export interface StudentProfileSummary {
   averageScore: number;
   quizzesCompleted: number;
   status: 'Active' | 'Under Review' | 'Completed';
+  approvedCertificates?: {
+    courseId: string;
+    courseTitle: string;
+    approvedDate: string;
+    approvedBy: string;
+  }[];
 }
 

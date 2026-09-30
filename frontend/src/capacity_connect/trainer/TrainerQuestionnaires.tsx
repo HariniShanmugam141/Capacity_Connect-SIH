@@ -112,7 +112,7 @@ export const TrainerQuestionnaires: React.FC = () => {
         <div>
           <div className="flex items-center gap-2">
             <span className="px-2 py-0.5 bg-slate-100 text-slate-700 text-[10px] font-bold rounded uppercase tracking-wider border border-slate-200">
-              Staff Portal
+              Trainer Portal
             </span>
             <h1 className="text-xl font-bold text-slate-900 tracking-tight">
               My Questionnaires & Assessments

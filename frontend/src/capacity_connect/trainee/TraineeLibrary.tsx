@@ -3,15 +3,24 @@ import { usePlatform } from '../PlatformContext';
 import {
   Video, Presentation, FileText, Download, Play, Search,
   Filter, Tag, Calendar, User, Clock, ExternalLink, Bookmark,
-  Award, Mail, CheckCircle2, ChevronRight, BookOpen
+  Award, Mail, CheckCircle2, ChevronRight, BookOpen, Zap
 } from 'lucide-react';
 
 export const TraineeLibrary: React.FC = () => {
-  const { allCourses, trainerLibrary, allTrainers, addTrainerToWishlist, traineeProfile } = usePlatform();
+  const { 
+    allCourses, 
+    trainerLibrary, 
+    allTrainers, 
+    addTrainerToWishlist, 
+    traineeProfile,
+    enrollInCourse,
+    setActiveNavTab
+  } = usePlatform();
   const [activeTab, setActiveTab] = useState<'courses' | 'materials'>('courses');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [wishlistSuccess, setWishlistSuccess] = useState<string | null>(null);
+  const [enrollNotification, setEnrollNotification] = useState<string | null>(null);
 
   // Filter courses
   const filteredCourses = allCourses.filter(course => {
@@ -36,7 +45,7 @@ export const TraineeLibrary: React.FC = () => {
 
   const categories = ['ALL', ...Array.from(new Set(allCourses.map(c => c.category)))];
 
-  const handleWishlistStaff = (trainerId: string, trainerName: string) => {
+  const handleWishlistTrainer = (trainerId: string, trainerName: string) => {
     const trainerObj = allTrainers.find(t => t.id === trainerId);
     if (trainerObj) {
       addTrainerToWishlist(trainerObj, `Interested in course mentorship under ${trainerName}`);
@@ -55,10 +64,10 @@ export const TraineeLibrary: React.FC = () => {
       <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl font-bold text-slate-900 tracking-tight">
-            Curriculum Courses & Faculty Directory
+            Curriculum Courses & Trainer Directory
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Browse all available courses, inspect respective faculty profiles, and access learning materials.
+            Browse all available courses, inspect respective trainer profiles, and access learning materials.
           </p>
         </div>
 
@@ -70,7 +79,7 @@ export const TraineeLibrary: React.FC = () => {
               activeTab === 'courses' ? 'bg-white text-slate-900 shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            <BookOpen size={13} /> All Courses & Staff ({allCourses.length})
+            <BookOpen size={13} /> All Courses & Trainers ({allCourses.length})
           </button>
           <button
             onClick={() => setActiveTab('materials')}
@@ -89,7 +98,7 @@ export const TraineeLibrary: React.FC = () => {
           <Search size={14} className="absolute left-3 top-2.5 text-slate-400" />
           <input
             type="text"
-            placeholder={activeTab === 'courses' ? "Search courses or faculty..." : "Search materials, topics..."}
+            placeholder={activeTab === 'courses' ? "Search courses or trainers..." : "Search materials, topics..."}
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             className="w-full pl-9 pr-3 py-1.5 text-xs border border-slate-200 rounded-xl bg-slate-50/50 focus:bg-white focus:border-slate-400 outline-none transition"
@@ -110,11 +119,28 @@ export const TraineeLibrary: React.FC = () => {
         </div>
       </div>
 
-      {/* VIEW 1: ALL COURSES & RESPECTIVE STAFF DETAILS */}
+      {/* ENROLL NOTIFICATION */}
+      {enrollNotification && (
+        <div className="p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs font-semibold flex items-center justify-between gap-2 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
+            <span>Enrolled in <strong>{enrollNotification}</strong>! Learning roadmap path generated.</span>
+          </div>
+          <button
+            onClick={() => setActiveNavTab('profile')}
+            className="text-emerald-800 font-bold underline hover:text-emerald-950 cursor-pointer text-xs"
+          >
+            View Roadmap Path →
+          </button>
+        </div>
+      )}
+
+      {/* VIEW 1: ALL COURSES & RESPECTIVE TRAINER DETAILS */}
       {activeTab === 'courses' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           {filteredCourses.map(course => {
             const wishlisted = isTrainerWishlisted(course.trainerId) || wishlistSuccess === course.trainerId;
+            const isEnrolled = traineeProfile.enrolledCourses.some(c => c.id === course.id);
             return (
               <div
                 key={course.id}
@@ -155,10 +181,10 @@ export const TraineeLibrary: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* RESPECTIVE STAFF DETAILS CARD */}
+                  {/* RESPECTIVE TRAINER DETAILS CARD */}
                   <div className="mt-3 pt-3 border-t border-slate-100">
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">
-                      Course Faculty & Instructor
+                      Course Trainer & Instructor
                     </span>
                     <div className="flex items-start justify-between gap-3 bg-slate-50/60 p-3 rounded-xl border border-slate-200/60">
                       <div className="flex items-center gap-3 min-w-0">
@@ -183,14 +209,14 @@ export const TraineeLibrary: React.FC = () => {
                       </div>
 
                       <button
-                        onClick={() => handleWishlistStaff(course.trainerId, course.trainerName)}
+                        onClick={() => handleWishlistTrainer(course.trainerId, course.trainerName)}
                         disabled={wishlisted}
                         className={`shrink-0 flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition cursor-pointer ${
                           wishlisted
                             ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                             : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200'
                         }`}
-                        title="Add this faculty to your mentorship wishlist"
+                        title="Add this trainer to your mentorship wishlist"
                       >
                         {wishlisted ? (
                           <>
@@ -198,7 +224,7 @@ export const TraineeLibrary: React.FC = () => {
                           </>
                         ) : (
                           <>
-                            <Bookmark size={12} /> Wishlist Staff
+                            <Bookmark size={12} /> Wishlist Trainer
                           </>
                         )}
                       </button>
@@ -207,17 +233,42 @@ export const TraineeLibrary: React.FC = () => {
                 </div>
 
                 {/* Footer Action */}
-                <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs">
-                  <span className="text-slate-400 text-[11px]">
-                    {course.materialsCount} study files available
-                  </span>
-                  <button
-                    onClick={() => setActiveTab('materials')}
-                    className="flex items-center gap-1 text-blue-600 font-semibold hover:text-blue-700 cursor-pointer"
-                  >
-                    <span>View Lectures & Decks</span>
-                    <ChevronRight size={13} />
-                  </button>
+                <div className="pt-4 mt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between text-xs gap-3">
+                  <div className="flex items-center gap-2">
+                    {isEnrolled ? (
+                      <button
+                        onClick={() => setActiveNavTab('profile')}
+                        className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-xl border border-emerald-200 transition cursor-pointer"
+                        title="Click to view learning roadmap path in your profile"
+                      >
+                        <CheckCircle2 size={13} />
+                        <span>Enrolled • View Roadmap Path</span>
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          enrollInCourse(course);
+                          setEnrollNotification(course.title);
+                          setTimeout(() => setEnrollNotification(null), 5000);
+                        }}
+                        className="flex items-center gap-1.5 px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
+                      >
+                        <Zap size={13} />
+                        <span>Enroll & Generate Roadmap</span>
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-between sm:justify-end gap-3 text-slate-400 text-[11px]">
+                    <span>{course.materialsCount} study files</span>
+                    <button
+                      onClick={() => setActiveTab('materials')}
+                      className="flex items-center gap-1 text-blue-600 font-semibold hover:text-blue-700 cursor-pointer"
+                    >
+                      <span>Lectures</span>
+                      <ChevronRight size={13} />
+                    </button>
+                  </div>
                 </div>
               </div>
             );
