@@ -245,33 +245,33 @@ export default function Auth({ onLogin }: AuthProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-center items-center p-4 font-sans text-slate-900">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-center items-center p-4 sm:p-6 font-sans text-slate-900">
+      <div className="w-full max-w-lg">
         
         {/* Brand Logo & Header */}
-        <div className="text-center mb-6">
+        <div className="text-center mb-7">
           <img
             src="/logo.png"
             alt="CapacityConnect Logo"
-            className="h-16 w-auto object-contain mx-auto"
+            className="h-20 sm:h-24 w-auto object-contain mx-auto"
           />
-          <p className="text-xs text-slate-500 mt-2">
+          <p className="text-sm sm:text-base text-slate-500 mt-2.5 font-medium">
             {mode === 'signin' ? 'Sign in with your email and password' : 'Create an account to get started'}
           </p>
         </div>
 
         {/* Auth Card */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] p-6 sm:p-7">
+        <div className="bg-white rounded-3xl border border-slate-200/90 shadow-[0_12px_32px_-8px_rgba(0,0,0,0.06),0_4px_6px_-2px_rgba(0,0,0,0.02)] p-7 sm:p-9">
           
           {/* Segmented Mode Selector: Sign In | Sign Up */}
-          <div className="flex bg-slate-100 p-1 rounded-xl mb-5 text-xs font-semibold">
+          <div className="flex bg-slate-100 p-1.5 rounded-2xl mb-6 text-sm font-bold">
             <button
               type="button"
               onClick={() => { setMode('signin'); setError(''); }}
-              className={`flex-1 py-1.5 rounded-lg transition cursor-pointer text-center ${
+              className={`flex-1 py-2 rounded-xl transition cursor-pointer text-center ${
                 mode === 'signin'
-                  ? 'bg-white text-slate-900 shadow-xs font-bold'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white text-slate-900 shadow-xs'
+                  : 'text-slate-500 hover:text-slate-900'
               }`}
             >
               Sign In
@@ -279,10 +279,10 @@ export default function Auth({ onLogin }: AuthProps) {
             <button
               type="button"
               onClick={() => { setMode('signup'); setError(''); }}
-              className={`flex-1 py-1.5 rounded-lg transition cursor-pointer text-center ${
+              className={`flex-1 py-2 rounded-xl transition cursor-pointer text-center ${
                 mode === 'signup'
-                  ? 'bg-white text-slate-900 shadow-xs font-bold'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white text-slate-900 shadow-xs'
+                  : 'text-slate-500 hover:text-slate-900'
               }`}
             >
               Sign Up
@@ -291,58 +291,58 @@ export default function Auth({ onLogin }: AuthProps) {
 
           {/* Error Message */}
           {error && (
-            <div className="mb-4 p-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-xs font-medium">
+            <div className="mb-5 p-3.5 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-sm font-medium">
               {error}
             </div>
           )}
 
           {/* Success Message */}
           {successMsg && (
-            <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-xs font-medium">
+            <div className="mb-5 p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-sm font-medium">
               {successMsg}
             </div>
           )}
 
           {/* ===================== FORM 1: SIGN IN ===================== */}
           {mode === 'signin' && (
-            <form onSubmit={handleSignIn} className="space-y-4 text-xs">
+            <form onSubmit={handleSignIn} className="space-y-4 text-sm">
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">
+                <label className="block font-bold text-slate-800 mb-1.5">
                   Email
                 </label>
                 <div className="relative">
-                  <Mail size={15} className="absolute left-3.5 top-3 text-slate-400" />
+                  <Mail size={18} className="absolute left-3.5 top-3.5 text-slate-400" />
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email"
-                    className="w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-xl text-xs bg-slate-50/50 focus:bg-white focus:border-slate-800 outline-none transition"
+                    className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl text-sm sm:text-base bg-slate-50/50 focus:bg-white focus:border-blue-600 outline-none transition"
                   />
                 </div>
               </div>
 
               <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="font-semibold text-slate-700">Password</label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="font-bold text-slate-800">Password</label>
                 </div>
                 <div className="relative">
-                  <Lock size={15} className="absolute left-3.5 top-3 text-slate-400" />
+                  <Lock size={18} className="absolute left-3.5 top-3.5 text-slate-400" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your password"
-                    className="w-full pl-9 pr-10 py-2.5 border border-slate-200 rounded-xl text-xs bg-slate-50/50 focus:bg-white focus:border-slate-800 outline-none transition"
+                    className="w-full pl-10 pr-11 py-3 border border-slate-200 rounded-xl text-sm sm:text-base bg-slate-50/50 focus:bg-white focus:border-blue-600 outline-none transition"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer"
+                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer"
                   >
-                    {showPassword ? <Eye size={15} /> : <EyeOff size={15} />}
+                    {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
                   </button>
                 </div>
               </div>
@@ -350,18 +350,18 @@ export default function Auth({ onLogin }: AuthProps) {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl font-bold text-xs shadow-sm transition flex items-center justify-center gap-1.5 cursor-pointer mt-2"
+                className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl font-bold text-base shadow-sm transition flex items-center justify-center gap-2 cursor-pointer mt-2"
               >
                 {loading ? 'Signing In...' : 'Sign In'}
-                <ArrowRight size={14} />
+                <ArrowRight size={18} />
               </button>
 
-              <div className="text-center pt-2 text-xs text-slate-500">
+              <div className="text-center pt-2 text-sm text-slate-500">
                 Don't have an account?{' '}
                 <button
                   type="button"
                   onClick={() => { setMode('signup'); setError(''); }}
-                  className="text-blue-600 font-bold hover:underline cursor-pointer"
+                  className="text-blue-600 font-bold hover:underline cursor-pointer ml-1"
                 >
                   Sign Up
                 </button>
@@ -371,48 +371,48 @@ export default function Auth({ onLogin }: AuthProps) {
 
           {/* ===================== FORM 2: SIGN UP ===================== */}
           {mode === 'signup' && (
-            <form onSubmit={handleSignUp} className="space-y-3.5 text-xs">
+            <form onSubmit={handleSignUp} className="space-y-4 text-sm">
               
               {/* Role Selection (Student, Staff/Trainer, Admin) */}
               <div>
-                <label className="block font-semibold text-slate-700 mb-1.5">
+                <label className="block font-bold text-slate-800 mb-1.5">
                   Select Role
                 </label>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-3 gap-2.5">
                   <button
                     type="button"
                     onClick={() => setSelectedRole('TRAINEE')}
-                    className={`py-2 px-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition border cursor-pointer ${
+                    className={`py-2.5 px-3 rounded-xl text-sm font-bold flex items-center justify-center gap-1.5 transition border cursor-pointer ${
                       selectedRole === 'TRAINEE'
                         ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
                         : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
                     }`}
                   >
-                    <GraduationCap size={13} />
+                    <GraduationCap size={16} />
                     <span>Student</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setSelectedRole('TRAINER')}
-                    className={`py-2 px-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition border cursor-pointer ${
+                    className={`py-2.5 px-3 rounded-xl text-sm font-bold flex items-center justify-center gap-1.5 transition border cursor-pointer ${
                       selectedRole === 'TRAINER'
                         ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
                         : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
                     }`}
                   >
-                    <MonitorPlay size={13} />
+                    <MonitorPlay size={16} />
                     <span>Staff</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setSelectedRole('ADMIN')}
-                    className={`py-2 px-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition border cursor-pointer ${
+                    className={`py-2.5 px-3 rounded-xl text-sm font-bold flex items-center justify-center gap-1.5 transition border cursor-pointer ${
                       selectedRole === 'ADMIN'
                         ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
                         : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
                     }`}
                   >
-                    <Shield size={13} />
+                    <Shield size={16} />
                     <span>Admin</span>
                   </button>
                 </div>
@@ -420,44 +420,44 @@ export default function Auth({ onLogin }: AuthProps) {
 
               {/* Full Name */}
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">
+                <label className="block font-bold text-slate-800 mb-1.5">
                   Full Name
                 </label>
                 <div className="relative">
-                  <User size={15} className="absolute left-3.5 top-3 text-slate-400" />
+                  <User size={18} className="absolute left-3.5 top-3.5 text-slate-400" />
                   <input
                     type="text"
                     required
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="Enter your name"
-                    className="w-full pl-9 pr-3 py-2 border border-slate-200 rounded-xl text-xs bg-slate-50/50 focus:bg-white focus:border-slate-800 outline-none transition"
+                    className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl text-sm sm:text-base bg-slate-50/50 focus:bg-white focus:border-blue-600 outline-none transition"
                   />
                 </div>
               </div>
 
               {/* Email */}
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">
+                <label className="block font-bold text-slate-800 mb-1.5">
                   Email
                 </label>
                 <div className="relative">
-                  <Mail size={15} className="absolute left-3.5 top-3 text-slate-400" />
+                  <Mail size={18} className="absolute left-3.5 top-3.5 text-slate-400" />
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email"
-                    className="w-full pl-9 pr-3 py-2 border border-slate-200 rounded-xl text-xs bg-slate-50/50 focus:bg-white focus:border-slate-800 outline-none transition"
+                    className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl text-sm sm:text-base bg-slate-50/50 focus:bg-white focus:border-blue-600 outline-none transition"
                   />
                 </div>
               </div>
 
               {/* Create Password & Re-enter Password */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
+                  <label className="block font-bold text-slate-800 mb-1.5">
                     Create Password
                   </label>
                   <div className="relative">
@@ -467,20 +467,20 @@ export default function Auth({ onLogin }: AuthProps) {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="At least 6 chars"
-                      className="w-full px-3 py-2 pr-8 border border-slate-200 rounded-xl text-xs bg-slate-50/50 focus:bg-white focus:border-slate-800 outline-none transition"
+                      className="w-full px-3.5 py-3 pr-9 border border-slate-200 rounded-xl text-sm sm:text-base bg-slate-50/50 focus:bg-white focus:border-blue-600 outline-none transition"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer"
                     >
-                      {showPassword ? <Eye size={13} /> : <EyeOff size={13} />}
+                      {showPassword ? <Eye size={16} /> : <EyeOff size={16} />}
                     </button>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
+                  <label className="block font-bold text-slate-800 mb-1.5">
                     Re-enter Password
                   </label>
                   <div className="relative">
@@ -490,14 +490,14 @@ export default function Auth({ onLogin }: AuthProps) {
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       placeholder="Repeat password"
-                      className="w-full px-3 py-2 pr-8 border border-slate-200 rounded-xl text-xs bg-slate-50/50 focus:bg-white focus:border-slate-800 outline-none transition"
+                      className="w-full px-3.5 py-3 pr-9 border border-slate-200 rounded-xl text-sm sm:text-base bg-slate-50/50 focus:bg-white focus:border-blue-600 outline-none transition"
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer"
                     >
-                      {showConfirmPassword ? <Eye size={13} /> : <EyeOff size={13} />}
+                      {showConfirmPassword ? <Eye size={16} /> : <EyeOff size={16} />}
                     </button>
                   </div>
                 </div>
@@ -506,13 +506,13 @@ export default function Auth({ onLogin }: AuthProps) {
               {/* STUDENT DATA COLLECTION FIELDS:
                   "for student first the data is collected and then the login in happen" */}
               {selectedRole === 'TRAINEE' && (
-                <div className="p-3 bg-slate-50/80 rounded-xl border border-slate-200/80 space-y-2.5 mt-2">
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
-                    Student Details
+                <div className="p-4 bg-slate-50/90 rounded-2xl border border-slate-200/90 space-y-3 mt-2">
+                  <span className="text-xs font-bold text-blue-700 uppercase tracking-wider block">
+                    Student Academic Details
                   </span>
 
                   <div>
-                    <label className="block text-[11px] font-medium text-slate-600 mb-0.5">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
                       Degree / Program
                     </label>
                     <input
@@ -521,12 +521,12 @@ export default function Auth({ onLogin }: AuthProps) {
                       value={studentDegree}
                       onChange={(e) => setStudentDegree(e.target.value)}
                       placeholder="e.g. B.Tech Computer Science"
-                      className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs bg-white outline-none"
+                      className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm bg-white outline-none focus:border-blue-600"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-medium text-slate-600 mb-0.5">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
                       College / University
                     </label>
                     <input
@@ -535,12 +535,12 @@ export default function Auth({ onLogin }: AuthProps) {
                       value={studentInstitution}
                       onChange={(e) => setStudentInstitution(e.target.value)}
                       placeholder="e.g. State Technical University"
-                      className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs bg-white outline-none"
+                      className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm bg-white outline-none focus:border-blue-600"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-medium text-slate-600 mb-0.5">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
                       Skills (comma separated)
                     </label>
                     <input
@@ -548,7 +548,7 @@ export default function Auth({ onLogin }: AuthProps) {
                       value={studentSkills}
                       onChange={(e) => setStudentSkills(e.target.value)}
                       placeholder="e.g. Python, Docker, React, AWS"
-                      className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs bg-white outline-none"
+                      className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm bg-white outline-none focus:border-blue-600"
                     />
                   </div>
                 </div>
@@ -557,7 +557,7 @@ export default function Auth({ onLogin }: AuthProps) {
               {/* Staff / Admin specialization */}
               {selectedRole === 'TRAINER' && (
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
+                  <label className="block font-bold text-slate-800 mb-1.5">
                     Subject / Department
                   </label>
                   <input
@@ -565,14 +565,14 @@ export default function Auth({ onLogin }: AuthProps) {
                     value={specialization}
                     onChange={(e) => setSpecialization(e.target.value)}
                     placeholder="e.g. Cloud Architecture & SRE"
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs bg-slate-50/50 focus:bg-white outline-none"
+                    className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm sm:text-base bg-slate-50/50 focus:bg-white focus:border-blue-600 outline-none"
                   />
                 </div>
               )}
 
               {selectedRole === 'ADMIN' && (
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
+                  <label className="block font-bold text-slate-800 mb-1.5">
                     Department Unit
                   </label>
                   <input
@@ -580,7 +580,7 @@ export default function Auth({ onLogin }: AuthProps) {
                     value={specialization}
                     onChange={(e) => setSpecialization(e.target.value)}
                     placeholder="e.g. Platform Operations"
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs bg-slate-50/50 focus:bg-white outline-none"
+                    className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm sm:text-base bg-slate-50/50 focus:bg-white focus:border-blue-600 outline-none"
                   />
                 </div>
               )}
@@ -588,18 +588,18 @@ export default function Auth({ onLogin }: AuthProps) {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl font-bold text-xs shadow-sm transition flex items-center justify-center gap-1.5 cursor-pointer mt-3"
+                className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl font-bold text-base shadow-sm transition flex items-center justify-center gap-2 cursor-pointer mt-3"
               >
                 {loading ? 'Creating Account & Logging In...' : 'Create Account & Sign In'}
-                <ArrowRight size={14} />
+                <ArrowRight size={18} />
               </button>
 
-              <div className="text-center pt-1 text-xs text-slate-500">
+              <div className="text-center pt-2 text-sm text-slate-500">
                 Already have an account?{' '}
                 <button
                   type="button"
                   onClick={() => { setMode('signin'); setError(''); }}
-                  className="text-blue-600 font-bold hover:underline cursor-pointer"
+                  className="text-blue-600 font-bold hover:underline cursor-pointer ml-1"
                 >
                   Sign In
                 </button>
@@ -610,7 +610,7 @@ export default function Auth({ onLogin }: AuthProps) {
         </div>
 
         {/* Minimal Footer */}
-        <div className="text-center mt-5 text-[11px] text-slate-400">
+        <div className="text-center mt-6 text-xs text-slate-400 font-medium">
           CapacityConnect Enterprise • Secure Role-Based Access
         </div>
 

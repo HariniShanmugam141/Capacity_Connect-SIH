@@ -13,6 +13,10 @@
   box-sizing: border-box;
 }
 
+html {
+  font-size: 17.5px;
+}
+
 body {
   margin: 0;
   font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -20,7 +24,7 @@ body {
   color: #0F172A;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  letter-spacing: -0.012em;
+  letter-spacing: -0.01em;
 }
 
 /* Custom minimal enterprise scrollbar */
