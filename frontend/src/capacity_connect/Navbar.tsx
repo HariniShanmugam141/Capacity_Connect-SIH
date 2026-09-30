@@ -54,13 +54,13 @@ export const Navbar: React.FC<{ onLogout?: () => void }> = ({ onLogout }) => {
               alt="CapacityConnect Logo"
               className="h-12 sm:h-14 w-auto object-contain max-w-[210px]"
             />
-            <span className="hidden sm:inline-block px-2 py-0.5 bg-blue-50 text-blue-700 text-xs font-bold rounded-md border border-blue-200/80">
+            <span className="hidden sm:inline-block px-2.5 py-0.5 bg-blue-50 text-blue-700 text-xs font-mono font-bold rounded-md border border-blue-200/80 uppercase tracking-wider">
               Enterprise
             </span>
           </div>
 
           {/* Locked-In Current Role Badge (Role cannot be switched while logged in) */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 font-heading">
             {currentRole === 'TRAINEE' && (
               <span className="flex items-center gap-1.5 px-3.5 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm font-bold border border-blue-200/80 shadow-2xs">
                 <User size={15} />
@@ -180,7 +180,7 @@ export const Navbar: React.FC<{ onLogout?: () => void }> = ({ onLogout }) => {
         </div>
 
         {/* Dynamic Sub-Navigation Tabs based on Logged-in Role */}
-        <div className="flex items-center space-x-1.5 sm:space-x-2 border-t border-slate-200/80 py-3 overflow-x-auto text-sm font-bold custom-scrollbar">
+        <div className="flex items-center space-x-1.5 sm:space-x-2 border-t border-slate-200/80 py-3 overflow-x-auto text-sm font-heading font-semibold custom-scrollbar">
           {currentRole === 'TRAINEE' && (
             <>
               <button

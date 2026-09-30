@@ -269,10 +269,10 @@ export const TraineeProfile: React.FC = () => {
 
             <div className="text-center sm:text-left space-y-1.5">
               <div className="flex items-center justify-center sm:justify-start gap-3">
-                <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                <h1 className="text-2xl sm:text-3xl font-heading font-black text-slate-900 tracking-tight">
                   {traineeProfile.fullName}
                 </h1>
-                <span className="bg-blue-50 text-blue-700 text-xs px-2.5 py-0.5 rounded-full font-semibold border border-blue-100">
+                <span className="bg-blue-50 text-blue-700 text-xs font-mono font-bold px-2.5 py-0.5 rounded-full border border-blue-200 uppercase tracking-wider">
                   Verified Trainee
                 </span>
               </div>
@@ -295,7 +295,7 @@ export const TraineeProfile: React.FC = () => {
                   </span>
                 )}
                 {traineeProfile.phone && (
-                  <span className="flex items-center gap-1.5">
+                  <span className="flex items-center gap-1.5 font-mono">
                     <Phone size={13} className="text-slate-400" />
                     {traineeProfile.phone}
                   </span>
@@ -305,7 +305,7 @@ export const TraineeProfile: React.FC = () => {
                     href={traineeProfile.githubUrl || `https://github.com/${traineeProfile.githubUsername}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex items-center gap-1.5 text-slate-700 hover:text-blue-600 font-semibold transition"
+                    className="flex items-center gap-1.5 text-slate-700 hover:text-blue-600 font-mono text-xs font-semibold transition"
                   >
                     <GithubIcon size={13} className="text-slate-600" />
                     github.com/{traineeProfile.githubUsername}
@@ -403,13 +403,13 @@ export const TraineeProfile: React.FC = () => {
                   <FileText size={18} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900 text-sm">Resume</h3>
-                  <span className="text-[10px] text-blue-600 font-semibold">ATS Verified</span>
+                  <h3 className="font-heading font-extrabold text-slate-900 text-sm">Resume</h3>
+                  <span className="text-[10px] font-mono text-blue-600 font-bold uppercase">ATS Verified</span>
                 </div>
               </div>
 
               {traineeProfile.resume?.atsScore && (
-                <span className="px-2 py-0.5 bg-blue-100 text-blue-800 font-bold text-xs rounded-lg border border-blue-200 flex items-center gap-1 shadow-xs">
+                <span className="px-2 py-0.5 bg-blue-100 text-blue-800 font-mono font-bold text-xs rounded-lg border border-blue-200 flex items-center gap-1 shadow-xs">
                   <ShieldCheck size={12} /> {traineeProfile.resume.atsScore}% Match
                 </span>
               )}
@@ -422,13 +422,13 @@ export const TraineeProfile: React.FC = () => {
                     <span className="text-xs font-bold text-slate-800 truncate max-w-[170px]">
                       {traineeProfile.resume.fileName}
                     </span>
-                    <span className="text-[10px] text-slate-500 font-medium">{traineeProfile.resume.fileSize}</span>
+                    <span className="text-[10px] font-mono text-slate-500 font-medium">{traineeProfile.resume.fileSize}</span>
                   </div>
                 </div>
 
                 <div className="flex flex-wrap gap-1">
                   {traineeProfile.resume.parsedSkills.slice(0, 6).map((sk, idx) => (
-                    <span key={idx} className="px-2 py-0.5 bg-white text-blue-700 rounded-md text-[10px] font-semibold border border-blue-100 shadow-2xs">
+                    <span key={idx} className="px-2 py-0.5 bg-white text-blue-700 font-mono rounded-md text-[10px] font-semibold border border-blue-100 shadow-2xs">
                       {sk}
                     </span>
                   ))}
@@ -466,8 +466,8 @@ export const TraineeProfile: React.FC = () => {
                   <Sparkles size={18} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900 text-sm">Skills</h3>
-                  <span className="text-[10px] text-emerald-600 font-semibold">{traineeProfile.skills.length} listed</span>
+                  <h3 className="font-heading font-extrabold text-slate-900 text-sm">Skills</h3>
+                  <span className="text-[10px] font-mono text-emerald-600 font-bold uppercase">{traineeProfile.skills.length} listed</span>
                 </div>
               </div>
             </div>
@@ -479,7 +479,7 @@ export const TraineeProfile: React.FC = () => {
                   className="flex items-center gap-1.5 px-2.5 py-1 bg-white hover:bg-emerald-50/50 rounded-lg border border-emerald-100 shadow-2xs transition group"
                 >
                   <span className="text-xs font-semibold text-slate-800">{skill.name}</span>
-                  <span className="text-[9px] px-1 py-0.2 rounded font-bold bg-emerald-100 text-emerald-700">
+                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded font-bold bg-emerald-100 text-emerald-700">
                     {skill.level}
                   </span>
                   <button
@@ -535,8 +535,8 @@ export const TraineeProfile: React.FC = () => {
                   <BookOpen size={18} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900 text-sm">Interests</h3>
-                  <span className="text-[10px] text-amber-600 font-semibold">{traineeProfile.interests.length} areas</span>
+                  <h3 className="font-heading font-extrabold text-slate-900 text-sm">Interests</h3>
+                  <span className="text-[10px] font-mono text-amber-600 font-bold uppercase">{traineeProfile.interests.length} areas</span>
                 </div>
               </div>
             </div>
@@ -786,8 +786,8 @@ export const TraineeProfile: React.FC = () => {
                 <GraduationCap size={18} />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 text-base">Qualifications</h3>
-                <span className="text-[10px] text-indigo-600 font-semibold">{traineeProfile.qualifications.length} records</span>
+                <h3 className="font-heading font-extrabold text-slate-900 text-base">Qualifications</h3>
+                <span className="text-[10px] font-mono text-indigo-600 font-bold uppercase">{traineeProfile.qualifications.length} records</span>
               </div>
             </div>
             <button
@@ -807,15 +807,15 @@ export const TraineeProfile: React.FC = () => {
                 >
                   <Trash2 size={13} />
                 </button>
-                <h4 className="font-bold text-sm text-slate-900">{qual.degree}</h4>
+                <h4 className="font-heading font-bold text-sm text-slate-900">{qual.degree}</h4>
                 <p className="text-xs font-medium text-indigo-600 mt-0.5">{qual.institution}</p>
                 <div className="flex items-center gap-3 text-xs text-slate-500 mt-2">
-                  <span className="flex items-center gap-1">
+                  <span className="flex items-center gap-1 font-mono text-[11px]">
                     <Calendar size={12} className="text-slate-400" />
                     {qual.startYear} – {qual.endYear}
                   </span>
                   {qual.gradeOrGpa && (
-                    <span className="px-2 py-0.5 bg-slate-50 rounded border border-slate-200 font-medium text-slate-700 text-[11px]">
+                    <span className="px-2 py-0.5 bg-slate-50 rounded border border-slate-200 font-mono font-bold text-slate-700 text-[11px]">
                       {qual.gradeOrGpa}
                     </span>
                   )}
@@ -836,8 +836,8 @@ export const TraineeProfile: React.FC = () => {
                 <Briefcase size={18} />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 text-base">Work Experience</h3>
-                <span className="text-[10px] text-purple-600 font-semibold">{traineeProfile.workExperience.length} roles</span>
+                <h3 className="font-heading font-extrabold text-slate-900 text-base">Work Experience</h3>
+                <span className="text-[10px] font-mono text-purple-600 font-bold uppercase">{traineeProfile.workExperience.length} roles</span>
               </div>
             </div>
             <button
@@ -858,9 +858,9 @@ export const TraineeProfile: React.FC = () => {
                   <Trash2 size={13} />
                 </button>
                 <div className="flex items-center gap-2">
-                  <h4 className="font-bold text-sm text-slate-900">{exp.title}</h4>
+                  <h4 className="font-heading font-bold text-sm text-slate-900">{exp.title}</h4>
                   {exp.current && (
-                    <span className="text-[9px] px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full font-bold">
+                    <span className="text-[9px] font-mono px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full font-bold">
                       Current
                     </span>
                   )}
@@ -868,7 +868,7 @@ export const TraineeProfile: React.FC = () => {
                 <p className="text-xs font-semibold text-purple-700 mt-0.5">
                   {exp.company} • {exp.location}
                 </p>
-                <p className="text-[11px] text-slate-400 mt-1">{exp.startDate} – {exp.endDate}</p>
+                <p className="text-[11px] font-mono text-slate-400 mt-1">{exp.startDate} – {exp.endDate}</p>
                 <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">{exp.description}</p>
               </div>
             ))}
@@ -889,8 +889,8 @@ export const TraineeProfile: React.FC = () => {
                 <Award size={18} />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 text-base">Certificates</h3>
-                <span className="text-[10px] text-rose-600 font-semibold">{traineeProfile.certificates.length} credentials</span>
+                <h3 className="font-heading font-extrabold text-slate-900 text-base">Certificates</h3>
+                <span className="text-[10px] font-mono text-rose-600 font-bold uppercase">{traineeProfile.certificates.length} credentials</span>
               </div>
             </div>
             <button
@@ -906,13 +906,13 @@ export const TraineeProfile: React.FC = () => {
               <div key={cert.id} className="p-3.5 rounded-xl border border-rose-100 bg-white shadow-2xs hover:shadow-sm transition flex items-center justify-between">
                 <div className="space-y-0.5">
                   <div className="flex items-center gap-2">
-                    <h4 className="font-bold text-sm text-slate-900">{cert.title}</h4>
-                    <span className="text-[9px] px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full font-bold">
+                    <h4 className="font-heading font-bold text-sm text-slate-900">{cert.title}</h4>
+                    <span className="text-[9px] font-mono px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full font-bold">
                       {cert.verificationStatus}
                     </span>
                   </div>
                   <p className="text-xs text-slate-500 font-medium">
-                    {cert.issuer} • {cert.issueDate}
+                    {cert.issuer} • <span className="font-mono">{cert.issueDate}</span>
                   </p>
                 </div>
               </div>
@@ -931,11 +931,11 @@ export const TraineeProfile: React.FC = () => {
                 <BookOpen size={18} />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 text-base">Courses</h3>
-                <span className="text-[10px] text-cyan-600 font-semibold">{traineeProfile.enrolledCourses.length} active</span>
+                <h3 className="font-heading font-extrabold text-slate-900 text-base">Courses</h3>
+                <span className="text-[10px] font-mono text-cyan-600 font-bold uppercase">{traineeProfile.enrolledCourses.length} active</span>
               </div>
             </div>
-            <span className="text-xs font-bold text-cyan-700 bg-cyan-100/70 px-2.5 py-0.5 rounded-full border border-cyan-200 shadow-2xs">
+            <span className="text-xs font-mono font-bold text-cyan-700 bg-cyan-100/70 px-2.5 py-0.5 rounded-full border border-cyan-200 shadow-2xs">
               Enrolled
             </span>
           </div>
@@ -945,12 +945,12 @@ export const TraineeProfile: React.FC = () => {
               <div key={course.id} className="p-3.5 rounded-xl border border-cyan-100 bg-white shadow-2xs hover:shadow-sm transition space-y-2">
                 <div className="flex items-start justify-between">
                   <div>
-                    <h4 className="font-bold text-sm text-slate-900">{course.title}</h4>
+                    <h4 className="font-heading font-bold text-sm text-slate-900">{course.title}</h4>
                     <p className="text-xs text-slate-500 mt-0.5">
                       {course.trainerName} • {course.category}
                     </p>
                   </div>
-                  <span className="text-xs font-bold text-slate-700">{course.progress}%</span>
+                  <span className="text-xs font-mono font-bold text-slate-700">{course.progress}%</span>
                 </div>
 
                 <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
@@ -971,15 +971,15 @@ export const TraineeProfile: React.FC = () => {
       {/* Row: MCQs Attempted & Feedback on Courses */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* MCQs ATTEMPTED (3D Emerald) */}
-        <div className="relative bg-gradient-to-b from-white to-emerald-50/30 rounded-2xl p-6 border border-emerald-200/80 shadow-[0_10px_25px_-5px_rgba(16,185,129,0.12),0_4px_6px_-2px_rgba(0,0,0,0.03)] hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+        <div className="relative bg-gradient-to-b from-white to-emerald-50/30 rounded-2xl p-6 border border-emerald-200/80 shadow-[0_10px_25px_-5px_rgba(168,85,247,0.12),0_4px_6px_-2px_rgba(0,0,0,0.03)] hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
           <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-2.5">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center shadow-md shadow-emerald-500/25">
                 <CheckCircle2 size={18} />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 text-base">Assessments</h3>
-                <span className="text-[10px] text-emerald-600 font-semibold">{traineeProfile.mcqsAttempted.length} completed</span>
+                <h3 className="font-heading font-extrabold text-slate-900 text-base">Assessments</h3>
+                <span className="text-[10px] font-mono text-emerald-600 font-bold uppercase">{traineeProfile.mcqsAttempted.length} completed</span>
               </div>
             </div>
           </div>
@@ -989,8 +989,8 @@ export const TraineeProfile: React.FC = () => {
               <div key={mcq.id} className="p-3.5 rounded-xl border border-emerald-100 bg-white shadow-2xs hover:shadow-sm transition flex items-center justify-between">
                 <div className="space-y-0.5">
                   <div className="flex items-center gap-2">
-                    <h4 className="font-bold text-sm text-slate-900">{mcq.title}</h4>
-                    <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold ${
+                    <h4 className="font-heading font-bold text-sm text-slate-900">{mcq.title}</h4>
+                    <span className={`text-[9px] font-mono px-2 py-0.5 rounded-full font-bold ${
                       mcq.passed ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
                     }`}>
                       {mcq.passed ? 'Passed' : 'Needs Review'}
@@ -1002,8 +1002,8 @@ export const TraineeProfile: React.FC = () => {
                 </div>
 
                 <div className="text-right pl-3">
-                  <span className="text-base font-extrabold text-emerald-700">{mcq.score}/{mcq.totalMarks}</span>
-                  <p className="text-[10px] font-bold text-slate-400">{mcq.percentage}%</p>
+                  <span className="text-base font-mono font-black text-emerald-700">{mcq.score}/{mcq.totalMarks}</span>
+                  <p className="text-[10px] font-mono font-bold text-slate-400">{mcq.percentage}%</p>
                 </div>
               </div>
             ))}
@@ -1021,8 +1021,8 @@ export const TraineeProfile: React.FC = () => {
                 <MessageSquare size={18} />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 text-base">Feedback</h3>
-                <span className="text-[10px] text-orange-600 font-semibold">{traineeProfile.feedbacks.length} submitted</span>
+                <h3 className="font-heading font-extrabold text-slate-900 text-base">Feedback</h3>
+                <span className="text-[10px] font-mono text-orange-600 font-bold uppercase">{traineeProfile.feedbacks.length} submitted</span>
               </div>
             </div>
             <button
@@ -1037,7 +1037,7 @@ export const TraineeProfile: React.FC = () => {
             {traineeProfile.feedbacks.map(fb => (
               <div key={fb.id} className="p-3.5 rounded-xl border border-orange-100 bg-white shadow-2xs hover:shadow-sm transition space-y-1">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-bold text-xs text-slate-900">{fb.courseTitle}</h4>
+                  <h4 className="font-heading font-bold text-xs text-slate-900">{fb.courseTitle}</h4>
                   <div className="flex items-center text-amber-500 text-xs">
                     {[...Array(5)].map((_, i) => (
                       <Star

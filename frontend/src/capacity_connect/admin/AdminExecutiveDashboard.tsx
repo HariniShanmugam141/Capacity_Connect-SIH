@@ -112,7 +112,7 @@ export const AdminExecutiveDashboard: React.FC = () => {
             <UserCheck size={22} />
           </div>
           <div>
-            <div className="text-2xl font-bold text-slate-900 leading-none">{allTrainers.length}</div>
+            <div className="text-2xl font-mono font-black text-slate-900 leading-none">{allTrainers.length}</div>
             <div className="text-xs text-slate-500 font-medium mt-1">Faculty Staff</div>
           </div>
         </div>
@@ -126,7 +126,7 @@ export const AdminExecutiveDashboard: React.FC = () => {
             <BookOpen size={22} />
           </div>
           <div>
-            <div className="text-2xl font-bold text-slate-900 leading-none">{allCourses.length}</div>
+            <div className="text-2xl font-mono font-black text-slate-900 leading-none">{allCourses.length}</div>
             <div className="text-xs text-slate-500 font-medium mt-1">Active Courses</div>
           </div>
         </div>
@@ -140,7 +140,7 @@ export const AdminExecutiveDashboard: React.FC = () => {
             <GraduationCap size={22} />
           </div>
           <div>
-            <div className="text-2xl font-bold text-slate-900 leading-none">{allStudents.length}</div>
+            <div className="text-2xl font-mono font-black text-slate-900 leading-none">{allStudents.length}</div>
             <div className="text-xs text-slate-500 font-medium mt-1">Enrolled Students</div>
           </div>
         </div>
@@ -154,7 +154,7 @@ export const AdminExecutiveDashboard: React.FC = () => {
             <Award size={22} />
           </div>
           <div>
-            <div className="text-2xl font-bold text-slate-900 leading-none">{adminAnalytics.avgAssessmentScore}%</div>
+            <div className="text-2xl font-mono font-black text-slate-900 leading-none">{adminAnalytics.avgAssessmentScore}%</div>
             <div className="text-xs text-slate-500 font-medium mt-1">Average Score</div>
           </div>
         </div>

@@ -215,8 +215,8 @@ export const TrainerProfile: React.FC = () => {
             <Users size={22} />
           </div>
           <div>
-            <span className="text-2xl font-black text-gray-900">{trainerProfile.totalStudentsMentored}+</span>
-            <p className="text-xs text-gray-500 font-medium">Trainees Mentored</p>
+            <span className="text-2xl font-mono font-black text-slate-900">{trainerProfile.totalStudentsMentored}+</span>
+            <p className="text-xs text-slate-500 font-medium">Trainees Mentored</p>
           </div>
         </div>
 
@@ -225,8 +225,8 @@ export const TrainerProfile: React.FC = () => {
             <Clock size={22} />
           </div>
           <div>
-            <span className="text-2xl font-black text-gray-900">{trainerProfile.hourlyCapacityHoursPerWeek} hrs</span>
-            <p className="text-xs text-gray-500 font-medium">Weekly Capacity Allocated</p>
+            <span className="text-2xl font-mono font-black text-slate-900">{trainerProfile.hourlyCapacityHoursPerWeek} hrs</span>
+            <p className="text-xs text-slate-500 font-medium">Weekly Capacity Allocated</p>
           </div>
         </div>
 
@@ -235,8 +235,8 @@ export const TrainerProfile: React.FC = () => {
             <Award size={22} />
           </div>
           <div>
-            <span className="text-2xl font-black text-gray-900">{trainerProfile.yearsOfExperience} Years</span>
-            <p className="text-xs text-gray-500 font-medium">Industry & Training Experience</p>
+            <span className="text-2xl font-mono font-black text-slate-900">{trainerProfile.yearsOfExperience} Years</span>
+            <p className="text-xs text-slate-500 font-medium">Industry & Training Experience</p>
           </div>
         </div>
       </div>
