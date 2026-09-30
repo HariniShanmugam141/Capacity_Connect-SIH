@@ -122,6 +122,20 @@ export interface TrainerWishlistItem {
   mentorshipStatus: 'Wishlisted' | 'Request Sent' | 'Session Scheduled' | 'Connected';
 }
 
+export interface GitHubRepository {
+  id: number | string;
+  name: string;
+  fullName?: string;
+  description: string;
+  htmlUrl: string;
+  language: string;
+  starsCount: number;
+  forksCount: number;
+  updatedAt: string;
+  homepageUrl?: string;
+  topics?: string[];
+}
+
 export interface TraineeProfile {
   id: string;
   fullName: string;
@@ -131,6 +145,9 @@ export interface TraineeProfile {
   location: string;
   bio: string;
   avatar: string;
+  githubUrl?: string;
+  githubUsername?: string;
+  githubProjects?: GitHubRepository[];
   qualifications: Qualification[];
   workExperience: WorkExperience[];
   resume?: ResumeData;

@@ -40,6 +40,7 @@ import {
   loadFromStorage,
   saveToStorage
 } from './store';
+import { fetchGitHubRepositories, repoToPortfolioItem, cleanGitHubUsername } from './githubService';
 
 interface PlatformContextType {
   // Current Persona / Role
@@ -73,6 +74,8 @@ interface PlatformContextType {
   addTrainerToWishlist: (trainer: BrowseableTrainer, notes: string) => void;
   removeTrainerFromWishlist: (trainerId: string) => void;
   submitMCQAttempt: (attempt: Omit<MCQAttempt, 'id' | 'attemptDate'>) => void;
+  syncGitHubProfile: (urlOrUsername: string) => Promise<void>;
+  isSyncingGitHub: boolean;
 
   // Trainer State & Operations
   trainerProfile: TrainerProfile;
@@ -132,6 +135,47 @@ export const PlatformProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return loaded;
   });
 
+  const [isSyncingGitHub, setIsSyncingGitHub] = useState(false);
+
+  const syncGitHubProfile = async (urlOrUsername: string) => {
+    if (!urlOrUsername || !urlOrUsername.trim()) return;
+    setIsSyncingGitHub(true);
+    try {
+      const username = cleanGitHubUsername(urlOrUsername);
+      const gitResult = await fetchGitHubRepositories(username);
+      const repos = gitResult.repositories;
+      const cleanUrl = gitResult.profileUrl || (urlOrUsername.startsWith('http') ? urlOrUsername.trim() : `https://github.com/${username}`);
+      const actualUsername = gitResult.username || username;
+
+      setTraineeProfile(prev => {
+        const existingPortfolioUrls = new Set(prev.portfolio.map(p => p.githubUrl));
+        const newPortfolioItems: PortfolioItem[] = repos
+          .filter(r => !existingPortfolioUrls.has(r.htmlUrl))
+          .map(r => ({
+            ...repoToPortfolioItem(r),
+            id: `pf_git_${r.id}`,
+            likes: r.starsCount || 1,
+            views: 12,
+            createdDate: new Date().toISOString().split('T')[0]
+          }));
+
+        const updated: TraineeProfile = {
+          ...prev,
+          githubUrl: cleanUrl,
+          githubUsername: actualUsername,
+          githubProjects: repos,
+          portfolio: [...newPortfolioItems, ...prev.portfolio]
+        };
+        saveToStorage('trainee_profile', updated);
+        return updated;
+      });
+    } catch (err) {
+      console.error('Failed to sync GitHub profile:', err);
+    } finally {
+      setIsSyncingGitHub(false);
+    }
+  };
+
   const initializeUserProfile = (user: {
     fullName: string;
     email: string;
@@ -146,6 +190,11 @@ export const PlatformProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       setTraineeProfile(fresh);
       saveToStorage('trainee_profile', fresh);
       setActiveNavTab('profile');
+      if (user.studentData?.githubUrl) {
+        setTimeout(() => {
+          syncGitHubProfile(user.studentData.githubUrl);
+        }, 150);
+      }
     } else if (user.role === 'TRAINER') {
       const freshTrainer: TrainerProfile = {
         ...INITIAL_TRAINER_PROFILE,
@@ -581,6 +630,8 @@ export const PlatformProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         addTrainerToWishlist,
         removeTrainerFromWishlist,
         submitMCQAttempt,
+        syncGitHubProfile,
+        isSyncingGitHub,
         trainerProfile,
         updateTrainerProfile,
         questionnaires,

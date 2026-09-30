@@ -76,6 +76,7 @@ export default function Auth({ onLogin }: AuthProps) {
   const [studentDegree, setStudentDegree] = useState('');
   const [studentInstitution, setStudentInstitution] = useState('');
   const [studentSkills, setStudentSkills] = useState('');
+  const [studentGithubUrl, setStudentGithubUrl] = useState('');
 
   // Staff / Admin extra field
   const [specialization, setSpecialization] = useState('');
@@ -206,7 +207,8 @@ export default function Auth({ onLogin }: AuthProps) {
         skills: studentSkills
           ? studentSkills.split(',').map(s => s.trim()).filter(Boolean)
           : ['Computer Science', 'Software Engineering'],
-        interests: ['Cloud Computing', 'AI Systems']
+        interests: ['Cloud Computing', 'AI Systems'],
+        githubUrl: studentGithubUrl.trim()
       };
     }
 
@@ -548,6 +550,19 @@ export default function Auth({ onLogin }: AuthProps) {
                       value={studentSkills}
                       onChange={(e) => setStudentSkills(e.target.value)}
                       placeholder="e.g. Python, Docker, React, AWS"
+                      className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm bg-white outline-none focus:border-blue-600"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      GitHub Profile Link (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      value={studentGithubUrl}
+                      onChange={(e) => setStudentGithubUrl(e.target.value)}
+                      placeholder="e.g. https://github.com/username"
                       className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm bg-white outline-none focus:border-blue-600"
                     />
                   </div>

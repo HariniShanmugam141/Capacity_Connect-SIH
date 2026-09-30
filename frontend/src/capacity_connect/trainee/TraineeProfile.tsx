@@ -1,11 +1,23 @@
 import React, { useState } from 'react';
 import { usePlatform } from '../PlatformContext';
+import { repoToPortfolioItem } from '../githubService';
 import {
   GraduationCap, Briefcase, FileText, Sparkles, Award, BookOpen,
   CheckCircle2, MessageSquare, Plus, Trash2, Edit3, Upload,
   Star, ExternalLink, Calendar, MapPin, Mail, Phone, Clock,
-  AlertCircle, ShieldCheck, Camera
+  AlertCircle, ShieldCheck, Camera, GitFork, RefreshCw,
+  Check, FolderGit2
 } from 'lucide-react';
+
+const GithubIcon: React.FC<{ size?: number; className?: string }> = ({ size = 20, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+    />
+  </svg>
+);
 
 export const TraineeProfile: React.FC = () => {
   const {
@@ -21,14 +33,22 @@ export const TraineeProfile: React.FC = () => {
     addInterest,
     deleteInterest,
     addCertificate,
-    addFeedback
+    addFeedback,
+    addPortfolioItem,
+    syncGitHubProfile,
+    isSyncingGitHub
   } = usePlatform();
+
+  // GitHub integration state
+  const [githubInput, setGithubInput] = useState(traineeProfile.githubUrl || '');
+  const [importedRepoIds, setImportedRepoIds] = useState<Record<string, boolean>>({});
 
   // Modals / Form toggles
   const [showEditBio, setShowEditBio] = useState(false);
   const [bioInput, setBioInput] = useState(traineeProfile.bio);
   const [titleInput, setTitleInput] = useState(traineeProfile.title);
   const [locationInput, setLocationInput] = useState(traineeProfile.location);
+  const [githubBioInput, setGithubBioInput] = useState(traineeProfile.githubUrl || '');
 
   // Qualification form
   const [showQualModal, setShowQualModal] = useState(false);
@@ -119,7 +139,21 @@ export const TraineeProfile: React.FC = () => {
       title: titleInput,
       location: locationInput
     });
+    if (githubBioInput.trim() && githubBioInput !== traineeProfile.githubUrl) {
+      syncGitHubProfile(githubBioInput);
+    }
     setShowEditBio(false);
+  };
+
+  const handleSyncGitHub = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!githubInput.trim()) return;
+    await syncGitHubProfile(githubInput);
+  };
+
+  const handleImportRepo = (repo: any) => {
+    addPortfolioItem(repoToPortfolioItem(repo));
+    setImportedRepoIds(prev => ({ ...prev, [String(repo.id)]: true }));
   };
 
   const handleAddQual = (e: React.FormEvent) => {
@@ -266,6 +300,17 @@ export const TraineeProfile: React.FC = () => {
                     {traineeProfile.phone}
                   </span>
                 )}
+                {traineeProfile.githubUsername && (
+                  <a
+                    href={traineeProfile.githubUrl || `https://github.com/${traineeProfile.githubUsername}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-1.5 text-slate-700 hover:text-blue-600 font-semibold transition"
+                  >
+                    <GithubIcon size={13} className="text-slate-600" />
+                    github.com/{traineeProfile.githubUsername}
+                  </a>
+                )}
               </div>
             </div>
           </div>
@@ -299,6 +344,16 @@ export const TraineeProfile: React.FC = () => {
                   type="text"
                   value={locationInput}
                   onChange={e => setLocationInput(e.target.value)}
+                  className="w-full mt-1 px-3 py-2 text-sm border rounded-lg bg-white focus:ring-2 focus:ring-indigo-500 outline-none"
+                />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="text-xs font-semibold text-gray-600">GitHub Profile Link</label>
+                <input
+                  type="text"
+                  placeholder="https://github.com/username"
+                  value={githubBioInput}
+                  onChange={e => setGithubBioInput(e.target.value)}
                   className="w-full mt-1 px-3 py-2 text-sm border rounded-lg bg-white focus:ring-2 focus:ring-indigo-500 outline-none"
                 />
               </div>
@@ -536,6 +591,189 @@ export const TraineeProfile: React.FC = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* 3D Distinct Option Card: GITHUB PROJECTS & REPOSITORIES */}
+      <div className="relative bg-gradient-to-b from-white to-slate-50/60 rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-[0_12px_30px_-8px_rgba(30,41,59,0.12),0_4px_6px_-2px_rgba(0,0,0,0.03)] hover:-translate-y-0.5 hover:shadow-xl transition-all duration-300">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 text-white flex items-center justify-center shadow-lg shadow-slate-900/25">
+              <GithubIcon size={22} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2.5">
+                <h3 className="font-extrabold text-slate-900 text-lg tracking-tight">GitHub Projects</h3>
+                {traineeProfile.githubProjects && traineeProfile.githubProjects.length > 0 && (
+                  <span className="text-[11px] px-2.5 py-0.5 bg-slate-900 text-white rounded-full font-bold">
+                    {traineeProfile.githubProjects.length} Repos
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-slate-500 font-medium mt-0.5">
+                {traineeProfile.githubUsername ? (
+                  <span>
+                    Linked account:{' '}
+                    <a
+                      href={traineeProfile.githubUrl || `https://github.com/${traineeProfile.githubUsername}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-blue-600 hover:underline font-bold"
+                    >
+                      @{traineeProfile.githubUsername}
+                    </a>
+                  </span>
+                ) : (
+                  'Submit your GitHub profile link to showcase your live projects'
+                )}
+              </p>
+            </div>
+          </div>
+
+          {/* Quick Submit / Sync URL Bar */}
+          <form onSubmit={handleSyncGitHub} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="https://github.com/username"
+                value={githubInput}
+                onChange={e => setGithubInput(e.target.value)}
+                className="w-full sm:w-72 px-3.5 py-2 text-xs sm:text-sm bg-white border border-slate-300 rounded-xl outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition shadow-xs"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={isSyncingGitHub || !githubInput.trim()}
+              className="flex items-center justify-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md transition cursor-pointer"
+            >
+              <RefreshCw size={14} className={isSyncingGitHub ? 'animate-spin' : ''} />
+              <span>{isSyncingGitHub ? 'Syncing...' : 'Sync Projects'}</span>
+            </button>
+          </form>
+        </div>
+
+        {/* Repositories Showcase Grid */}
+        {traineeProfile.githubProjects && traineeProfile.githubProjects.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {traineeProfile.githubProjects.map(repo => {
+              const isImported =
+                importedRepoIds[String(repo.id)] ||
+                traineeProfile.portfolio.some(p => p.githubUrl === repo.htmlUrl);
+
+              const getLangDotColor = (lang?: string) => {
+                switch (lang?.toLowerCase()) {
+                  case 'typescript': return 'bg-blue-600';
+                  case 'javascript': return 'bg-amber-400';
+                  case 'python': return 'bg-emerald-600';
+                  case 'go': return 'bg-cyan-600';
+                  case 'java': return 'bg-orange-600';
+                  case 'c++': case 'cpp': return 'bg-pink-600';
+                  case 'rust': return 'bg-amber-700';
+                  case 'html': return 'bg-rose-500';
+                  default: return 'bg-slate-400';
+                }
+              };
+
+              return (
+                <div
+                  key={repo.id}
+                  className="p-4 rounded-2xl border border-slate-200/80 bg-white hover:border-blue-300 hover:shadow-md transition-all flex flex-col justify-between group"
+                >
+                  <div>
+                    <div className="flex items-start justify-between gap-2 mb-1.5">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <FolderGit2 size={16} className="text-slate-400 group-hover:text-blue-600 transition shrink-0" />
+                        <a
+                          href={repo.htmlUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="font-bold text-sm text-slate-900 hover:text-blue-600 transition truncate"
+                        >
+                          {repo.name}
+                        </a>
+                      </div>
+                      <a
+                        href={repo.htmlUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-slate-400 hover:text-blue-600 p-1 transition"
+                        title="View on GitHub"
+                      >
+                        <ExternalLink size={14} />
+                      </a>
+                    </div>
+
+                    <p className="text-xs text-slate-600 line-clamp-2 mb-3 leading-relaxed">
+                      {repo.description || 'Public GitHub repository showcase.'}
+                    </p>
+
+                    {repo.topics && repo.topics.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-3">
+                        {repo.topics.slice(0, 4).map((t, idx) => (
+                          <span
+                            key={idx}
+                            className="text-[10px] px-2 py-0.5 bg-slate-100 text-slate-600 font-medium rounded-md"
+                          >
+                            #{t}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                    <div className="flex items-center gap-3">
+                      {repo.language && (
+                        <span className="flex items-center gap-1 font-semibold text-slate-700">
+                          <span className={`w-2.5 h-2.5 rounded-full ${getLangDotColor(repo.language)} inline-block`} />
+                          {repo.language}
+                        </span>
+                      )}
+                      {repo.starsCount > 0 && (
+                        <span className="flex items-center gap-1">
+                          <Star size={12} className="fill-amber-400 text-amber-400" />
+                          {repo.starsCount}
+                        </span>
+                      )}
+                      {repo.forksCount > 0 && (
+                        <span className="flex items-center gap-1">
+                          <GitFork size={12} className="text-slate-400" />
+                          {repo.forksCount}
+                        </span>
+                      )}
+                    </div>
+
+                    <button
+                      onClick={() => handleImportRepo(repo)}
+                      className={`flex items-center gap-1 px-3 py-1 rounded-xl text-xs font-bold transition cursor-pointer ${
+                        isImported
+                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                          : 'bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 border border-slate-200'
+                      }`}
+                    >
+                      {isImported ? (
+                        <>
+                          <Check size={12} /> In Portfolio
+                        </>
+                      ) : (
+                        <>
+                          <Plus size={12} /> Add to Portfolio
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="text-center py-10 px-4 border-2 border-dashed border-slate-200 rounded-2xl bg-white/60">
+            <GithubIcon size={38} className="text-slate-300 mx-auto mb-2" />
+            <h4 className="font-bold text-slate-700 text-sm">No GitHub Projects Synced Yet</h4>
+            <p className="text-xs text-slate-500 max-w-md mx-auto mt-1 mb-4 leading-relaxed">
+              Submit your GitHub profile link above (e.g. https://github.com/username) to list your software projects, repositories, and stars directly on the platform.
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Row: Qualifications & Work Experience */}

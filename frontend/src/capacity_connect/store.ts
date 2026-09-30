@@ -27,6 +27,34 @@ export const INITIAL_TRAINEE_PROFILE: TraineeProfile = {
   location: 'Bengaluru, India',
   bio: 'Passionate software engineer focused on cloud infrastructure, container orchestration, and practical enterprise LLM applications. Constantly upskilling and sharing ideations.',
   avatar: '',
+  githubUrl: 'https://github.com/bhavyashree',
+  githubUsername: 'bhavyashree',
+  githubProjects: [
+    {
+      id: 101,
+      name: 'cloud-failover-blueprint',
+      fullName: 'bhavyashree/cloud-failover-blueprint',
+      description: 'Automated telemetry listener that triggers dynamic weighted routing with sub-second failover latency.',
+      htmlUrl: 'https://github.com/bhavyashree/cloud-failover-blueprint',
+      language: 'Go',
+      starsCount: 42,
+      forksCount: 11,
+      updatedAt: '2026-09-15T12:00:00Z',
+      topics: ['terraform', 'aws', 'failover', 'docker']
+    },
+    {
+      id: 102,
+      name: 'competency-ai-matcher',
+      fullName: 'bhavyashree/competency-ai-matcher',
+      description: 'Vector-indexed mapping of employee skills against organizational demand using semantic embeddings.',
+      htmlUrl: 'https://github.com/bhavyashree/competency-ai-matcher',
+      language: 'Python',
+      starsCount: 67,
+      forksCount: 19,
+      updatedAt: '2026-09-22T15:30:00Z',
+      topics: ['python', 'fastapi', 'chromadb', 'embeddings']
+    }
+  ],
   qualifications: [
     {
       id: 'q1',
@@ -302,6 +330,11 @@ export const createDefaultTraineeProfile = (
   location: '',
   bio: '',
   avatar: '',
+  githubUrl: studentData?.githubUrl || '',
+  githubUsername: studentData?.githubUrl
+    ? studentData.githubUrl.replace(/https?:\/\/github\.com\/?/i, '').replace(/\/+$/, '')
+    : '',
+  githubProjects: [],
   qualifications: studentData?.degree
     ? [
         {
