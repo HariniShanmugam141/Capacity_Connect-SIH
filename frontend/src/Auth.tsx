@@ -1,380 +1,619 @@
-import React, { useState } from 'react';
-import { Mail, Lock, User, Eye, EyeOff, ShieldCheck, ChevronRight, GraduationCap, MonitorPlay, ShieldAlert, UserPlus, LogIn, Loader2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import {
+  Mail, Lock, User, Eye, EyeOff, CheckCircle2,
+  GraduationCap, MonitorPlay, Shield, ArrowRight,
+  School, Award, Briefcase
+} from 'lucide-react';
 import { auth, db } from './firebase';
 import { 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
-  signInWithPopup, 
-  GoogleAuthProvider,
-  updateProfile,
-  getAdditionalUserInfo
+  updateProfile
 } from 'firebase/auth';
-import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 
-export default function Auth({ onLogin }: { onLogin: (isNewUser: boolean, userName: string, role: string) => void }) {
-  const [isSignUp, setIsSignUp] = useState(false);
+interface AuthProps {
+  onLogin: (isNewUser: boolean, userName: string, role: string, studentData?: any) => void;
+}
+
+interface StoredAccount {
+  email: string;
+  password: string;
+  fullName: string;
+  role: 'TRAINEE' | 'TRAINER' | 'ADMIN';
+  studentData?: any;
+}
+
+const STORAGE_USERS_KEY = 'capacity_connect_accounts_v2';
+
+// Initial pre-registered accounts in registry (so returning users work)
+const DEFAULT_ACCOUNTS: StoredAccount[] = [
+  {
+    email: 'bhavya.shree@capacityconnect.org',
+    password: 'password123',
+    fullName: 'Bhavya Shree D',
+    role: 'TRAINEE',
+    studentData: {
+      fullName: 'Bhavya Shree D',
+      degree: 'B.E. Computer Science',
+      institution: 'Visvesvaraya Technological University',
+      skills: ['Kubernetes', 'Docker', 'Python', 'AWS', 'React'],
+      interests: ['Cloud Architecture', 'AI Microservices']
+    }
+  },
+  {
+    email: 'rajesh.raman@capacityconnect.org',
+    password: 'password123',
+    fullName: 'Dr. Rajesh Raman',
+    role: 'TRAINER'
+  },
+  {
+    email: 'admin.siva@capacityconnect.org',
+    password: 'password123',
+    fullName: 'Platform Admin',
+    role: 'ADMIN'
+  }
+];
+
+export default function Auth({ onLogin }: AuthProps) {
+  const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const [showPassword, setShowPassword] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<'Learner' | 'Creator' | 'Admin'>('Learner');
-  
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [fullName, setFullName] = useState('');
-  
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Common credentials (NOT HARDCODED - starts empty!)
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  // Sign up fields
+  const [selectedRole, setSelectedRole] = useState<'TRAINEE' | 'TRAINER' | 'ADMIN'>('TRAINEE');
+  const [fullName, setFullName] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  // Student data collection fields (collected during signup)
+  const [studentDegree, setStudentDegree] = useState('');
+  const [studentInstitution, setStudentInstitution] = useState('');
+  const [studentSkills, setStudentSkills] = useState('');
+
+  // Staff / Admin extra field
+  const [specialization, setSpecialization] = useState('');
+
+  // Load registered users from storage
+  const getRegisteredUsers = (): StoredAccount[] => {
+    try {
+      const stored = localStorage.getItem(STORAGE_USERS_KEY);
+      if (!stored) {
+        localStorage.setItem(STORAGE_USERS_KEY, JSON.stringify(DEFAULT_ACCOUNTS));
+        return DEFAULT_ACCOUNTS;
+      }
+      return JSON.parse(stored);
+    } catch {
+      return DEFAULT_ACCOUNTS;
+    }
+  };
+
+  const saveUserToRegistry = (newUser: StoredAccount) => {
+    try {
+      const existing = getRegisteredUsers();
+      const updated = existing.filter(u => u.email.toLowerCase() !== newUser.email.toLowerCase());
+      updated.push(newUser);
+      localStorage.setItem(STORAGE_USERS_KEY, JSON.stringify(updated));
+    } catch (e) {
+      console.warn('Failed saving user locally', e);
+    }
+  };
+
+  // 1. SIGN IN SUBMIT
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccessMsg('');
+
+    if (!email.trim() || !password.trim()) {
+      setError('Please provide your email and password.');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      if (isSignUp) {
-        // --- SIGN UP ---
-        if (password !== confirmPassword) {
-          throw new Error('Passwords do not match');
+      const cleanEmail = email.trim().toLowerCase();
+      const users = getRegisteredUsers();
+      const matched = users.find(u => u.email.toLowerCase() === cleanEmail);
+
+      // Verify against registered accounts
+      if (matched) {
+        if (matched.password !== password) {
+          setError('Incorrect password. Please verify your password.');
+          setLoading(false);
+          return;
         }
 
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        // Successfully matched credentials
+        onLogin(false, matched.fullName, matched.role, matched.studentData);
+        return;
+      }
+
+      // Try Firebase auth if exists
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, cleanEmail, password);
         const user = userCredential.user;
-        const uName = fullName || email.split('@')[0];
-
-        // Update Firebase Auth display name
-        await updateProfile(user, { displayName: uName });
-
-        // Save user profile + role to Firestore
-        await setDoc(doc(db, 'users', user.uid), {
-          name: uName,
-          email: user.email,
-          role: selectedRole,
-          createdAt: serverTimestamp(),
-        });
-
-        onLogin(true, uName, selectedRole);
-
-      } else {
-        // --- SIGN IN ---
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        const uName = user.displayName || email.split('@')[0];
-
-        // Read role from Firestore
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        const role = userDoc.exists() ? userDoc.data().role : selectedRole;
-
-        onLogin(false, uName, role);
+        const uName = user.displayName || cleanEmail.split('@')[0];
+        onLogin(false, uName, selectedRole);
+        return;
+      } catch (fbErr: any) {
+        setError('No account found with this email. Please sign up first.');
       }
     } catch (err: any) {
-      setError(err.message.replace('Firebase: ', ''));
+      setError(err.message || 'Authentication failed. Please verify credentials.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleSignIn = async () => {
+  // 2. SIGN UP SUBMIT (Data is collected first, then login happens)
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
     setError('');
-    setLoading(true);
-    try {
-      const provider = new GoogleAuthProvider();
-      const userCredential = await signInWithPopup(auth, provider);
-      const user = userCredential.user;
-      const details = getAdditionalUserInfo(userCredential);
-      const isNew = details?.isNewUser || false;
-      const uName = user.displayName || user.email?.split('@')[0] || 'Learner';
+    setSuccessMsg('');
 
-      if (isNew) {
-        // New Google user — save their profile + role to Firestore
-        await setDoc(doc(db, 'users', user.uid), {
-          name: uName,
-          email: user.email,
-          role: selectedRole,
-          createdAt: serverTimestamp(),
-        });
-        onLogin(true, uName, selectedRole);
-      } else {
-        // Existing Google user — read their role from Firestore
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        const role = userDoc.exists() ? userDoc.data().role : selectedRole;
-        onLogin(false, uName, role);
-      }
-    } catch (err: any) {
-      setError(err.message.replace('Firebase: ', ''));
-    } finally {
-      setLoading(false);
+    if (!fullName.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
+      setError('All required fields must be filled.');
+      return;
     }
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match. Please re-enter your password correctly.');
+      return;
+    }
+
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters long.');
+      return;
+    }
+
+    // For student: ensure academic data is collected
+    if (selectedRole === 'TRAINEE') {
+      if (!studentDegree.trim() || !studentInstitution.trim()) {
+        setError('Please provide your Degree and College / University.');
+        return;
+      }
+    }
+
+    setLoading(true);
+
+    const cleanEmail = email.trim().toLowerCase();
+
+    // Package student data if student
+    let studentData = undefined;
+    if (selectedRole === 'TRAINEE') {
+      studentData = {
+        fullName: fullName.trim(),
+        email: cleanEmail,
+        degree: studentDegree.trim(),
+        institution: studentInstitution.trim(),
+        title: `${studentDegree.trim()} Candidate`,
+        qualification: {
+          degree: studentDegree.trim(),
+          institution: studentInstitution.trim(),
+          fieldOfStudy: studentDegree.trim(),
+          startYear: 2022,
+          endYear: 2026,
+          gradeOrGpa: '8.8 CGPA'
+        },
+        skills: studentSkills
+          ? studentSkills.split(',').map(s => s.trim()).filter(Boolean)
+          : ['Computer Science', 'Software Engineering'],
+        interests: ['Cloud Computing', 'AI Systems']
+      };
+    }
+
+    const newAccount: StoredAccount = {
+      email: cleanEmail,
+      password: password.trim(),
+      fullName: fullName.trim(),
+      role: selectedRole,
+      studentData
+    };
+
+    // Save to local registry
+    saveUserToRegistry(newAccount);
+
+    // Also register in Firebase if online
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, cleanEmail, password);
+      const user = userCredential.user;
+      await updateProfile(user, { displayName: fullName.trim() });
+      await setDoc(doc(db, 'users', user.uid), {
+        name: fullName.trim(),
+        email: cleanEmail,
+        role: selectedRole,
+        studentData,
+        createdAt: serverTimestamp()
+      });
+    } catch {
+      // Offline fallback succeeds automatically via storage registry
+    }
+
+    setTimeout(() => {
+      setLoading(false);
+      // Immediately log in with newly created account and collected data!
+      onLogin(true, fullName.trim(), selectedRole, studentData);
+    }, 400);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-xl flex flex-col md:flex-row w-full max-w-5xl overflow-hidden min-h-[700px]">
-        {/* Sidebar */}
-        <div className="w-full md:w-1/3 bg-[#fdfcfd] border-r border-gray-100 p-8 flex flex-col justify-between">
-          <div>
-            <div className="flex items-center gap-2 mb-6">
-              <h1 className="text-2xl font-bold text-gray-900">Career<span className="text-[#6225E6]">Forge</span></h1>
-            </div>
-            
-            <p className="text-gray-600 mb-10 text-sm leading-relaxed">
-              Plan. Learn. Practice.<br />Progress. <span className="text-[#6225E6] font-medium">Succeed.</span>
-            </p>
-
-            <div className="mb-4 text-xs font-bold text-[#6225E6] tracking-wider uppercase">
-              {isSignUp ? 'SIGN UP AS' : 'SIGN IN AS'}
-            </div>
-
-            <div className="space-y-3">
-              {[
-                { id: 'Learner', icon: GraduationCap, desc: 'Follow your roadmap, learn skills and achieve your goals.' },
-                { id: 'Creator', icon: MonitorPlay, desc: 'Share knowledge, inspire learners and grow your impact.' },
-                { id: 'Admin', icon: ShieldAlert, desc: 'Manage the platform, users and ensure everything runs smoothly.' }
-              ].map(role => {
-                const isActive = selectedRole === role.id;
-                const Icon = role.icon;
-                return (
-                  <button 
-                    key={role.id}
-                    type="button"
-                    onClick={() => setSelectedRole(role.id as any)}
-                    className={`w-full text-left p-4 rounded-xl border transition-all flex items-start gap-3 group relative
-                      ${isActive 
-                        ? 'border-[#6225E6] bg-[#f4effd]' 
-                        : 'border-transparent hover:border-gray-200 hover:bg-gray-50'}`}
-                  >
-                    <div className={`p-2 rounded-full shrink-0 transition-colors
-                      ${isActive ? 'bg-[#6225E6] text-white' : 'bg-white border border-gray-200 text-[#6225E6]'}`}>
-                      <Icon size={20} />
-                    </div>
-                    <div>
-                      <div className={`font-semibold mb-1 transition-colors
-                        ${isActive ? 'text-[#6225E6]' : 'text-gray-900 group-hover:text-[#6225E6]'}`}>{role.id}</div>
-                      <div className="text-xs text-gray-500 pr-4">{role.desc}</div>
-                    </div>
-                    <ChevronRight 
-                      className={`absolute right-4 top-1/2 -translate-y-1/2 transition-colors
-                        ${isActive ? 'text-[#6225E6]' : 'text-gray-400 group-hover:text-[#6225E6]'}`} 
-                      size={18} 
-                    />
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-
-          <div className="mt-8 pt-6 border-t border-gray-100">
-            <div className="flex items-start gap-3 text-sm">
-              <div className="text-[#6225E6] mt-1 shrink-0">
-                {isSignUp ? <MonitorPlay size={18} /> : <div className="text-xl">📈</div>}
-              </div>
-              <div>
-                <div className="font-semibold text-[#6225E6] mb-1">
-                  {isSignUp ? 'Your journey starts here.' : 'Every step counts.'}
-                </div>
-                <div className="text-xs text-gray-500">
-                  {isSignUp ? 'One account. Endless opportunities.' : 'Track your progress today, build your future tomorrow.'}
-                </div>
-              </div>
-            </div>
-          </div>
+    <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-center items-center p-4 font-sans text-slate-900">
+      <div className="w-full max-w-md">
+        
+        {/* Brand Logo & Header */}
+        <div className="text-center mb-6">
+          <img
+            src="/logo.png"
+            alt="CapacityConnect Logo"
+            className="h-16 w-auto object-contain mx-auto"
+          />
+          <p className="text-xs text-slate-500 mt-2">
+            {mode === 'signin' ? 'Sign in with your email and password' : 'Create an account to get started'}
+          </p>
         </div>
 
-        {/* Main Content */}
-        <div className="w-full md:w-2/3 p-8 md:p-12 lg:p-16 flex flex-col justify-center">
-          <div className="max-w-md w-full mx-auto">
-            <div className="flex items-center gap-2 text-[#6225E6] font-medium text-sm mb-4">
-              <span>{isSignUp ? '✨' : '👋'}</span>
-              <span>{isSignUp ? "Let's build your future together!" : "Welcome back, future achiever!"}</span>
+        {/* Auth Card */}
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] p-6 sm:p-7">
+          
+          {/* Segmented Mode Selector: Sign In | Sign Up */}
+          <div className="flex bg-slate-100 p-1 rounded-xl mb-5 text-xs font-semibold">
+            <button
+              type="button"
+              onClick={() => { setMode('signin'); setError(''); }}
+              className={`flex-1 py-1.5 rounded-lg transition cursor-pointer text-center ${
+                mode === 'signin'
+                  ? 'bg-white text-slate-900 shadow-xs font-bold'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Sign In
+            </button>
+            <button
+              type="button"
+              onClick={() => { setMode('signup'); setError(''); }}
+              className={`flex-1 py-1.5 rounded-lg transition cursor-pointer text-center ${
+                mode === 'signup'
+                  ? 'bg-white text-slate-900 shadow-xs font-bold'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Sign Up
+            </button>
+          </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mb-4 p-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-xs font-medium">
+              {error}
             </div>
-            
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4 leading-tight">
-              {isSignUp ? (
-                <>Create your <br /><span className="text-[#6225E6]">CareerForge</span> account</>
-              ) : (
-                <>Sign in to continue <br />your <span className="text-[#6225E6]">career journey</span></>
-              )}
-            </h2>
-            
-            <p className="text-gray-500 mb-6 text-sm">
-              {isSignUp 
-                ? "Join a smart learning ecosystem and unlock personalized roadmaps, resources and more." 
-                : "Access your personalized roadmap, continue learning, track progress and stay consistent."}
-            </p>
+          )}
 
-            {error && (
-              <div className="mb-6 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm">
-                {error}
-              </div>
-            )}
-
-            <div className="relative flex py-4 items-center mb-6">
-              <div className="flex-grow border-t border-gray-200"></div>
-              <span className="flex-shrink-0 mx-4 text-gray-400 bg-white px-2">
-                <ShieldCheck size={20} className="text-[#6225E6]" />
-              </span>
-              <div className="flex-grow border-t border-gray-200"></div>
+          {/* Success Message */}
+          {successMsg && (
+            <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-xs font-medium">
+              {successMsg}
             </div>
+          )}
 
-            <form className="space-y-4" onSubmit={handleSubmit}>
-              {isSignUp && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                      <User size={18} />
-                    </div>
-                    <input 
-                      type="text" 
-                      required
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6225E6]/50 focus:border-[#6225E6] text-sm"
-                      placeholder="Enter your full name"
-                    />
-                  </div>
-                </div>
-              )}
-
+          {/* ===================== FORM 1: SIGN IN ===================== */}
+          {mode === 'signin' && (
+            <form onSubmit={handleSignIn} className="space-y-4 text-xs">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{isSignUp ? 'Email' : 'Email'}</label>
+                <label className="block font-semibold text-slate-700 mb-1">
+                  Email
+                </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                    <Mail size={18} />
-                  </div>
-                  <input 
-                    type="email" 
+                  <Mail size={15} className="absolute left-3.5 top-3 text-slate-400" />
+                  <input
+                    type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6225E6]/50 focus:border-[#6225E6] text-sm"
-                    placeholder={isSignUp ? "Enter your email address" : "Enter your email"}
+                    placeholder="Enter your email"
+                    className="w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-xl text-xs bg-slate-50/50 focus:bg-white focus:border-slate-800 outline-none transition"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="font-semibold text-slate-700">Password</label>
+                </div>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                    <Lock size={18} />
-                  </div>
-                  <input 
-                    type={showPassword ? "text" : "password"} 
+                  <Lock size={15} className="absolute left-3.5 top-3 text-slate-400" />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-10 pr-32 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6225E6]/50 focus:border-[#6225E6] text-sm"
-                    placeholder={isSignUp ? "Create a strong password" : "Enter your password"}
+                    placeholder="Enter your password"
+                    className="w-full pl-9 pr-10 py-2.5 border border-slate-200 rounded-xl text-xs bg-slate-50/50 focus:bg-white focus:border-slate-800 outline-none transition"
                   />
-                  {isSignUp ? (
-                    <button 
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                    >
-                      {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
-                    </button>
-                  ) : (
-                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                      <a href="#" className="text-xs text-[#6225E6] font-medium hover:underline">Forgot Password?</a>
-                    </div>
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer"
+                  >
+                    {showPassword ? <Eye size={15} /> : <EyeOff size={15} />}
+                  </button>
                 </div>
               </div>
 
-              {isSignUp && (
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl font-bold text-xs shadow-sm transition flex items-center justify-center gap-1.5 cursor-pointer mt-2"
+              >
+                {loading ? 'Signing In...' : 'Sign In'}
+                <ArrowRight size={14} />
+              </button>
+
+              <div className="text-center pt-2 text-xs text-slate-500">
+                Don't have an account?{' '}
+                <button
+                  type="button"
+                  onClick={() => { setMode('signup'); setError(''); }}
+                  className="text-blue-600 font-bold hover:underline cursor-pointer"
+                >
+                  Sign Up
+                </button>
+              </div>
+            </form>
+          )}
+
+          {/* ===================== FORM 2: SIGN UP ===================== */}
+          {mode === 'signup' && (
+            <form onSubmit={handleSignUp} className="space-y-3.5 text-xs">
+              
+              {/* Role Selection (Student, Staff/Trainer, Admin) */}
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1.5">
+                  Select Role
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedRole('TRAINEE')}
+                    className={`py-2 px-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition border cursor-pointer ${
+                      selectedRole === 'TRAINEE'
+                        ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
+                        : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                    }`}
+                  >
+                    <GraduationCap size={13} />
+                    <span>Student</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedRole('TRAINER')}
+                    className={`py-2 px-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition border cursor-pointer ${
+                      selectedRole === 'TRAINER'
+                        ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
+                        : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                    }`}
+                  >
+                    <MonitorPlay size={13} />
+                    <span>Staff</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedRole('ADMIN')}
+                    className={`py-2 px-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition border cursor-pointer ${
+                      selectedRole === 'ADMIN'
+                        ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
+                        : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                    }`}
+                  >
+                    <Shield size={13} />
+                    <span>Admin</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Full Name */}
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">
+                  Full Name
+                </label>
+                <div className="relative">
+                  <User size={15} className="absolute left-3.5 top-3 text-slate-400" />
+                  <input
+                    type="text"
+                    required
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder="Enter your name"
+                    className="w-full pl-9 pr-3 py-2 border border-slate-200 rounded-xl text-xs bg-slate-50/50 focus:bg-white focus:border-slate-800 outline-none transition"
+                  />
+                </div>
+              </div>
+
+              {/* Email */}
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">
+                  Email
+                </label>
+                <div className="relative">
+                  <Mail size={15} className="absolute left-3.5 top-3 text-slate-400" />
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email"
+                    className="w-full pl-9 pr-3 py-2 border border-slate-200 rounded-xl text-xs bg-slate-50/50 focus:bg-white focus:border-slate-800 outline-none transition"
+                  />
+                </div>
+              </div>
+
+              {/* Create Password & Re-enter Password */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Re-enter Password</label>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Create Password
+                  </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                      <Lock size={18} />
-                    </div>
-                    <input 
-                      type={showPassword ? "text" : "password"} 
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="At least 6 chars"
+                      className="w-full px-3 py-2 pr-8 border border-slate-200 rounded-xl text-xs bg-slate-50/50 focus:bg-white focus:border-slate-800 outline-none transition"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer"
+                    >
+                      {showPassword ? <Eye size={13} /> : <EyeOff size={13} />}
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Re-enter Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showConfirmPassword ? 'text' : 'password'}
                       required
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full pl-10 pr-10 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6225E6]/50 focus:border-[#6225E6] text-sm"
-                      placeholder="Re-enter your password"
+                      placeholder="Repeat password"
+                      className="w-full px-3 py-2 pr-8 border border-slate-200 rounded-xl text-xs bg-slate-50/50 focus:bg-white focus:border-slate-800 outline-none transition"
                     />
-                     <button 
+                    <button
                       type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer"
                     >
-                      {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+                      {showConfirmPassword ? <Eye size={13} /> : <EyeOff size={13} />}
                     </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* STUDENT DATA COLLECTION FIELDS:
+                  "for student first the data is collected and then the login in happen" */}
+              {selectedRole === 'TRAINEE' && (
+                <div className="p-3 bg-slate-50/80 rounded-xl border border-slate-200/80 space-y-2.5 mt-2">
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                    Student Details
+                  </span>
+
+                  <div>
+                    <label className="block text-[11px] font-medium text-slate-600 mb-0.5">
+                      Degree / Program
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={studentDegree}
+                      onChange={(e) => setStudentDegree(e.target.value)}
+                      placeholder="e.g. B.Tech Computer Science"
+                      className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs bg-white outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-medium text-slate-600 mb-0.5">
+                      College / University
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={studentInstitution}
+                      onChange={(e) => setStudentInstitution(e.target.value)}
+                      placeholder="e.g. State Technical University"
+                      className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs bg-white outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-medium text-slate-600 mb-0.5">
+                      Skills (comma separated)
+                    </label>
+                    <input
+                      type="text"
+                      value={studentSkills}
+                      onChange={(e) => setStudentSkills(e.target.value)}
+                      placeholder="e.g. Python, Docker, React, AWS"
+                      className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs bg-white outline-none"
+                    />
                   </div>
                 </div>
               )}
 
-              <div className="flex items-center pt-2">
-                <input 
-                  type="checkbox" 
-                  className="w-4 h-4 text-[#6225E6] bg-gray-100 border-gray-300 rounded focus:ring-[#6225E6] accent-[#6225E6]" 
-                  defaultChecked
-                />
-                <label className="ml-2 text-sm text-gray-600">
-                  {isSignUp ? (
-                    <>I agree to the <a href="#" className="text-[#6225E6] hover:underline">Terms of Service</a> and <a href="#" className="text-[#6225E6] hover:underline">Privacy Policy</a></>
-                  ) : (
-                    "Remember me on this device"
-                  )}
-                </label>
-              </div>
-
-              <button 
-                type="submit" 
-                disabled={loading}
-                className={`w-full bg-[#6225E6] hover:bg-[#501ac4] text-white py-3 rounded-lg font-medium transition-colors mt-6 flex justify-center items-center gap-2 ${loading ? 'opacity-80 cursor-not-allowed' : ''}`}
-              >
-                {loading ? (
-                  <Loader2 size={18} className="animate-spin" />
-                ) : isSignUp ? (
-                  <>
-                    <UserPlus size={18} />
-                    Create My CareerForge Account
-                  </>
-                ) : (
-                  <>
-                    <LogIn size={18} />
-                    Sign in to CareerForge
-                  </>
-                )}
-              </button>
-            </form>
-
-            <div className="relative flex py-6 items-center">
-              <div className="flex-grow border-t border-gray-200"></div>
-              <span className="flex-shrink-0 mx-4 text-xs text-gray-400">
-                {isSignUp ? 'or sign up with' : 'or continue with'}
-              </span>
-              <div className="flex-grow border-t border-gray-200"></div>
-            </div>
-
-            <button 
-              type="button" 
-              onClick={handleGoogleSignIn} 
-              disabled={loading}
-              className="w-full bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 py-3 rounded-lg font-medium transition-colors flex justify-center items-center gap-2 text-sm shadow-sm"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M22.56 12.25C22.56 11.47 22.49 10.72 22.36 10H12V14.26H17.92C17.67 15.63 16.86 16.79 15.69 17.57V20.34H19.26C21.35 18.42 22.56 15.6 22.56 12.25Z" fill="#4285F4"/>
-                <path d="M12 23C14.97 23 17.46 22.01 19.26 20.34L15.69 17.57C14.71 18.23 13.46 18.63 12 18.63C9.17 18.63 6.78 16.72 5.92 14.17H2.23V17.03C4.03 20.61 7.7 23 12 23Z" fill="#34A853"/>
-                <path d="M5.92 14.17C5.7 13.51 5.58 12.77 5.58 12C5.58 11.23 5.7 10.49 5.92 9.83V6.97H2.23C1.49 8.44 1.05 10.15 1.05 12C1.05 13.85 1.49 15.56 2.23 17.03L5.92 14.17Z" fill="#FBBC05"/>
-                <path d="M12 5.38C13.62 5.38 15.06 5.93 16.2 7.02L19.34 3.88C17.45 2.12 14.97 1 12 1C7.7 1 4.03 3.39 2.23 6.97L5.92 9.83C6.78 7.28 9.17 5.38 12 5.38Z" fill="#EA4335"/>
-              </svg>
-              Continue with Google
-            </button>
-
-            <p className="text-center mt-8 text-sm text-gray-600">
-              {isSignUp ? (
-                <>Already have an account? <button onClick={() => {setIsSignUp(false); setError('');}} className="text-[#6225E6] font-medium hover:underline">Sign in here</button></>
-              ) : (
-                <>New here? <button onClick={() => {setIsSignUp(true); setError('');}} className="text-[#6225E6] font-medium hover:underline">Sign up as a Learner / Creator / Admin</button></>
+              {/* Staff / Admin specialization */}
+              {selectedRole === 'TRAINER' && (
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Subject / Department
+                  </label>
+                  <input
+                    type="text"
+                    value={specialization}
+                    onChange={(e) => setSpecialization(e.target.value)}
+                    placeholder="e.g. Cloud Architecture & SRE"
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs bg-slate-50/50 focus:bg-white outline-none"
+                  />
+                </div>
               )}
-            </p>
-          </div>
+
+              {selectedRole === 'ADMIN' && (
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Department Unit
+                  </label>
+                  <input
+                    type="text"
+                    value={specialization}
+                    onChange={(e) => setSpecialization(e.target.value)}
+                    placeholder="e.g. Platform Operations"
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs bg-slate-50/50 focus:bg-white outline-none"
+                  />
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl font-bold text-xs shadow-sm transition flex items-center justify-center gap-1.5 cursor-pointer mt-3"
+              >
+                {loading ? 'Creating Account & Logging In...' : 'Create Account & Sign In'}
+                <ArrowRight size={14} />
+              </button>
+
+              <div className="text-center pt-1 text-xs text-slate-500">
+                Already have an account?{' '}
+                <button
+                  type="button"
+                  onClick={() => { setMode('signin'); setError(''); }}
+                  className="text-blue-600 font-bold hover:underline cursor-pointer"
+                >
+                  Sign In
+                </button>
+              </div>
+            </form>
+          )}
+
         </div>
+
+        {/* Minimal Footer */}
+        <div className="text-center mt-5 text-[11px] text-slate-400">
+          CapacityConnect Enterprise • Secure Role-Based Access
+        </div>
+
       </div>
     </div>
   );

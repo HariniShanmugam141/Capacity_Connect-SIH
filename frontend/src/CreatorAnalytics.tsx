@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
   Home, PlaySquare, PlusSquare, BarChart2, Star, Users, User, Settings, LogOut,
   Bell, ChevronDown, ChevronRight, ChevronUp, Eye, Clock, Heart, UserPlus,
-  Play, Calendar, PieChart, ArrowUp, ThumbsUp, MessageSquare, Share2, Lightbulb
+  Play, Calendar, PieChart, ArrowUp, ThumbsUp, MessageSquare, Share2, Lightbulb, TrendingUp
 } from 'lucide-react';
 
 // --- Sidebar ---
