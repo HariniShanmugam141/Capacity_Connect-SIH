@@ -68,14 +68,14 @@ export const Navbar: React.FC<{ onLogout?: () => void }> = ({ onLogout }) => {
 
       {/* Main Header Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20 gap-4">
+        <div className="flex items-center justify-between h-24 sm:h-26 gap-4">
           
           {/* Brand Identity */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-3">
             <img
               src="/logo.png"
               alt="CapacityConnect Logo"
-              className="h-12 sm:h-14 w-auto object-contain max-w-[210px]"
+              className="h-16 sm:h-20 md:h-22 w-auto object-contain max-w-[260px] drop-shadow-xs transition-transform hover:scale-102"
             />
             <span className="hidden sm:inline-block px-3 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full border border-blue-200 uppercase tracking-wider">
               Enterprise

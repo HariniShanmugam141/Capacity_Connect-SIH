@@ -566,9 +566,9 @@ export default function Auth({ onLogin }: AuthProps) {
           <img
             src="/logo.png"
             alt="CapacityConnect Logo"
-            className="h-12 sm:h-14 w-auto object-contain mb-3"
+            className="h-28 sm:h-36 md:h-40 w-auto object-contain mb-3 drop-shadow-md transition-transform duration-300 hover:scale-105"
           />
-          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight text-center">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight text-center">
             Capacity Connect Enterprise Access
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 text-center">
@@ -741,14 +741,22 @@ export default function Auth({ onLogin }: AuthProps) {
       <div className="w-full max-w-md">
         
         {/* Back Button to Return to the 3 Cards */}
-        <button
-          type="button"
-          onClick={() => { setSelectedRole(null); setError(''); }}
-          className="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-blue-600 transition mb-6 cursor-pointer"
-        >
-          <ArrowLeft size={16} />
-          <span>Back to Portal Selection</span>
-        </button>
+        <div className="flex items-center justify-between mb-5">
+          <button
+            type="button"
+            onClick={() => { setSelectedRole(null); setError(''); }}
+            className="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-blue-600 transition cursor-pointer"
+          >
+            <ArrowLeft size={16} />
+            <span>Back to Portal Selection</span>
+          </button>
+
+          <img
+            src="/logo.png"
+            alt="CapacityConnect Logo"
+            className="h-14 sm:h-16 w-auto object-contain drop-shadow-xs"
+          />
+        </div>
 
         {/* Login Card */}
         <div className="bg-white rounded-3xl border border-slate-200 shadow-xl p-7 sm:p-9 relative overflow-hidden">

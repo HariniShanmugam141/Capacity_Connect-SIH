@@ -1339,7 +1339,7 @@ export const ALL_TRAINERS: BrowseableTrainer[] = [
 export const ALL_COURSES: PlatformCourse[] = [
   {
     id: 'crs_ml_1',
-    code: 'NPTEL-ML-501',
+    code: 'CC-ML-501',
     title: 'Introduction to Machine Learning',
     category: 'Machine Learning',
     description: 'Comprehensive study of supervised and unsupervised learning algorithms, regression, SVM, decision trees, neural networks, and model evaluation metrics.',
@@ -1358,7 +1358,7 @@ export const ALL_COURSES: PlatformCourse[] = [
   },
   {
     id: 'crs_ai_2',
-    code: 'NPTEL-AI-501',
+    code: 'CC-AI-501',
     title: 'Artificial Intelligence',
     category: 'Artificial Intelligence',
     description: 'Fundamental search algorithms, heuristic optimization, game trees, alpha-beta pruning, knowledge representation, logic, and intelligent autonomous agents.',
@@ -1377,7 +1377,7 @@ export const ALL_COURSES: PlatformCourse[] = [
   },
   {
     id: 'crs_net_3',
-    code: 'NPTEL-CS-302',
+    code: 'CC-CS-302',
     title: 'Computer Networks',
     category: 'Networking',
     description: 'OSI and TCP/IP stack layers, physical and data link protocols, IP subnetting, routing algorithms (OSPF, BGP), congestion control, and network socket programming.',
@@ -1396,7 +1396,7 @@ export const ALL_COURSES: PlatformCourse[] = [
   },
   {
     id: 'crs_dsa_4',
-    code: 'NPTEL-CS-201',
+    code: 'CC-CS-201',
     title: 'Programming and Data Structure',
     category: 'Programming',
     description: 'Asymptotic notation, linked lists, stacks, queues, binary search trees, AVL trees, heaps, graph traversals (BFS, DFS), dynamic programming, and greedy algorithms.',
@@ -1415,7 +1415,7 @@ export const ALL_COURSES: PlatformCourse[] = [
   },
   {
     id: 'crs_se_5',
-    code: 'NPTEL-CS-401',
+    code: 'CC-CS-401',
     title: 'Software Engineering',
     category: 'Software Development',
     description: 'Software development life cycles, agile methodologies, requirements engineering, UML modeling, design patterns, automated unit testing, and CI/CD releases.',
@@ -1434,7 +1434,7 @@ export const ALL_COURSES: PlatformCourse[] = [
   },
   {
     id: 'crs_dc_6',
-    code: 'NPTEL-EE-301',
+    code: 'CC-EE-301',
     title: 'Data Communication',
     category: 'Communication',
     description: 'Signals and spectra, digital modulation (QAM, PSK), multiplexing (TDM, FDM), error detection and correction (CRC, Hamming codes), and transmission media.',
@@ -1453,7 +1453,7 @@ export const ALL_COURSES: PlatformCourse[] = [
   },
   {
     id: 'crs_prob_7',
-    code: 'NPTEL-MA-201',
+    code: 'CC-MA-201',
     title: 'Introduction to Probability Theory and Statistics',
     category: 'Statistics',
     description: 'Probability axioms, conditional probability, Bayes theorem, random variables, discrete and continuous probability distributions, expectation, and central limit theorem.',
@@ -1472,7 +1472,7 @@ export const ALL_COURSES: PlatformCourse[] = [
   },
   {
     id: 'crs_dm_8',
-    code: 'NPTEL-CS-103',
+    code: 'CC-CS-103',
     title: 'Discrete Mathematics',
     category: 'Mathematics',
     description: 'Set theory, relations and functions, propositional and predicate calculus, mathematical induction, combinatorics, recurrence relations, and graph coloring.',
@@ -1491,7 +1491,7 @@ export const ALL_COURSES: PlatformCourse[] = [
   },
   {
     id: 'crs_fai_9',
-    code: 'NPTEL-AI-101',
+    code: 'CC-AI-101',
     title: 'Fundamentals of Artificial Intelligence',
     category: 'AI',
     description: 'History and foundations of AI, problem-solving through uninformed and heuristic searches, constraint satisfaction problems, probabilistic reasoning, and intro to deep learning.',
@@ -1510,7 +1510,7 @@ export const ALL_COURSES: PlatformCourse[] = [
   },
   {
     id: 'crs_re_10',
-    code: 'NPTEL-EE-502',
+    code: 'CC-EE-502',
     title: 'Renewable Energy Sources: Fundamentals and Technologies',
     category: 'Renewable Energy',
     description: 'Solar photovoltaic cell physics, wind turbine aerodynamics, bioenergy conversion, energy storage systems, grid integration, and sustainability economics.',
@@ -1529,7 +1529,7 @@ export const ALL_COURSES: PlatformCourse[] = [
   },
   {
     id: 'crs_gt_11',
-    code: 'NPTEL-MG-401',
+    code: 'CC-MG-401',
     title: 'Game Theory',
     category: 'Mathematics / Management',
     description: 'Strategic form games, dominant strategies, Nash equilibrium, extensive form games with backward induction, mixed strategies, auctions, and mechanism design.',
@@ -1548,7 +1548,7 @@ export const ALL_COURSES: PlatformCourse[] = [
   },
   {
     id: 'crs_es_12',
-    code: 'NPTEL-MA-303',
+    code: 'CC-MA-303',
     title: 'Engineering Statistics',
     category: 'Statistics',
     description: 'Sampling distributions, parameter estimation, hypothesis testing, ANOVA, linear regression analysis, quality control charts, and design of engineering experiments.',

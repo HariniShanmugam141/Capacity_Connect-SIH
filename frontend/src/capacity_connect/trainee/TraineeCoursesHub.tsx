@@ -131,7 +131,7 @@ export const TraineeCoursesHub: React.FC = () => {
           <div>
             <h3 className="font-bold text-slate-900 text-lg">No Enrolled Courses Found</h3>
             <p className="text-xs text-slate-500 max-w-md mx-auto mt-1">
-              Enroll in top NPTEL & engineering courses to instantly access your dedicated strategy roadmap, video lectures, and faculty handbooks.
+              Enroll in premier national curriculum & engineering courses to instantly access your dedicated strategy roadmap, video lectures, and faculty handbooks.
             </p>
           </div>
 
@@ -141,7 +141,7 @@ export const TraineeCoursesHub: React.FC = () => {
               className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md transition cursor-pointer inline-flex items-center gap-2"
             >
               <Plus size={14} />
-              <span>Browse 12+ NPTEL & Technology Courses</span>
+              <span>Browse 13+ Industry & Technology Courses</span>
             </button>
           </div>
         </div>
@@ -233,7 +233,7 @@ export const TraineeCoursesHub: React.FC = () => {
                   <BookOpen size={20} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900 text-lg">NPTEL & Tech Course Catalog</h3>
+                  <h3 className="font-bold text-slate-900 text-lg">National Technical Course Catalog</h3>
                   <span className="text-xs text-slate-500">
                     Enroll in verified courses to unlock their tailored 4-item strategy roadmap
                   </span>
